@@ -22,3 +22,9 @@ Some branches directly track upstream. **if you commit to these branches, your c
 * master
 * 7.1.x
 * 9.0.x
+
+Instead, commits should be applied to the appropriate `-netlify` branches:
+* 7.1.x-netlify
+* 9.0.x-netlify
+
+Commits on these branches will attepmt to be rebased onto updated upstream when possible.

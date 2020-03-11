@@ -10,3 +10,8 @@ rules:
   - base: 9.0.x
     upstream: apache:9.0.x
     mergeMethod: hardreset
+  - base: 7.1.x-netlify
+    upstream: apache:7.1.x
+    mergeMethod: rebase
+    conflictReviewers:
+      - calavera
