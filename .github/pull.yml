@@ -4,14 +4,29 @@ rules:
   - base: master
     upstream: apache:master
     mergeMethod: hardreset
+
+  - base: master-netlify
+    upstream: apache:master
+    mergeMethod: rebase
+    conflictReviewers:
+      - calavera
+
   - base: 7.1.x
     upstream: apache:7.1.x
     mergeMethod: hardreset
+
+  - base: 7.1.x-netlify
+    upstream: apache:7.1.x
+    mergeMethod: rebase
+    conflictReviewers:
+      - calavera
+
   - base: 9.0.x
     upstream: apache:9.0.x
     mergeMethod: hardreset
-  - base: 7.1.x-netlify
-    upstream: apache:7.1.x
+
+  - base: 9.0.x-netlify
+    upstream: apache:9.0.x
     mergeMethod: rebase
     conflictReviewers:
       - calavera

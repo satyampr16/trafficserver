@@ -6,11 +6,19 @@ See https://trafficserver.apache.org or upstream [apache/trafficserver](https://
 # This Fork
 This fork is maintained by [@netlify](https://github.com/netlify) to allow us to test patches and maintain our own ATS related code. This default branch contains only settings and this readme - you should go to the appropriate branch to view the actual code.
 
-[view the master branch](https://github.com/netlify/trafficserver/tree/master)
+## Upstream tracking branches
+[view upstream master branch](https://github.com/netlify/trafficserver/tree/master)
 
-[view the 7.1.x branch](https://github.com/netlify/trafficserver/tree/7.1.x)
+[view upstream 7.1.x branch](https://github.com/netlify/trafficserver/tree/7.1.x)
 
-[view the 9.0.x branch](https://github.com/netlify/trafficserver/tree/9.0.x)
+[view upstream 9.0.x branch](https://github.com/netlify/trafficserver/tree/9.0.x)
+
+## Netlify branches
+[view netlify master branch](https://github.com/netlify/trafficserver/tree/master-netlify)
+
+[view netlify 7.1.x branch](https://github.com/netlify/trafficserver/tree/7.1.x-netlify)
+
+[view netlify 9.0.x branch](https://github.com/netlify/trafficserver/tree/9.0.x-netlify)
 
 # Automation Notes
 This repo is automatically updated by [wei/pull](https://github.com/wei/pull).
@@ -24,7 +32,8 @@ Some branches directly track upstream. **if you commit to these branches, your c
 * 9.0.x
 
 Instead, commits should be applied to the appropriate `-netlify` branches:
+* master-netlify
 * 7.1.x-netlify
 * 9.0.x-netlify
 
-Commits on these branches will attepmt to be rebased onto updated upstream when possible.
+Commits on these branches will attepmt to be merged with upstream when possible.
