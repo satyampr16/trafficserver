@@ -11,7 +11,6 @@ rules:
     conflictReviewers:
       - calavera
       - zxaos
-      - mraerino
 
   - base: 7.1.x
     upstream: apache:7.1.x
@@ -23,7 +22,6 @@ rules:
     conflictReviewers:
       - calavera
       - zxaos
-      - mraerino
 
   - base: 9.0.x
     upstream: apache:9.0.x
@@ -35,4 +33,3 @@ rules:
     conflictReviewers:
       - calavera
       - zxaos
-      - mraerino
