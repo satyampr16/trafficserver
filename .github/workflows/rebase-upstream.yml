@@ -1,0 +1,119 @@
+---
+name: Rebase onto upstream
+
+on:
+  schedule:
+    - cron: '0 0,12 * * *'
+
+  repository_dispatch:
+    types:
+      - 'on-demand-check'
+
+jobs:
+  'update_master':
+    name: 'update master from upstream'
+    runs-on: ubuntu-latest
+    steps:
+      - name: clone repo
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+      - name: rebase upstream
+        uses: zxaos/patchup@v1
+        with:
+          local_branch: master
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          upstream_branch: master
+          upstream_repo: apache/trafficserver
+          target_tag: patchup-master
+
+  'update_master-netlify':
+    name: 'update master-netlify from upstream'
+    runs-on: ubuntu-latest
+    steps:
+      - name: clone repo
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+      - name: rebase upstream
+        uses: zxaos/patchup@v1
+        with:
+          local_branch: master-netlify
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          upstream_branch: master
+          upstream_repo: apache/trafficserver
+          target_tag: patchup-master-netlify
+
+  'update_7-1-x':
+    name: 'update 7.1.x from upstream'
+    runs-on: ubuntu-latest
+    steps:
+      - name: clone repo
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+      - name: rebase upstream
+        uses: zxaos/patchup@v1
+        with:
+          local_branch: 7.1.x
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          upstream_branch: 7.1.x
+          upstream_repo: apache/trafficserver
+          target_tag: patchup-7.1.x
+
+  'update_7-1-x-netlify':
+    name: 'update 7.1.x-netlify from upstream'
+    runs-on: ubuntu-latest
+    steps:
+      - name: clone repo
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+      - name: rebase upstream
+        uses: zxaos/patchup@v1
+        with:
+          local_branch: 7.1.x-netlify
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          upstream_branch: 7.1.x
+          upstream_repo: apache/trafficserver
+          target_tag: patchup-7.1.x-netlify
+
+  'update_9-0-x':
+    name: 'update 9.0.x from upstream'
+    runs-on: ubuntu-latest
+    steps:
+      - name: clone repo
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+      - name: rebase upstream
+        uses: zxaos/patchup@v1
+        with:
+          local_branch: 9.0.x
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          upstream_branch: 9.0.x
+          upstream_repo: apache/trafficserver
+          target_tag: patchup-9.0.x
+
+  'update_9-0-x-netlify':
+    name: 'update 9.0.x-netlify from upstream'
+    runs-on: ubuntu-latest
+    steps:
+      - name: clone repo
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+      - name: rebase upstream
+        uses: zxaos/patchup@v1
+        with:
+          local_branch: 9.0.x-netlify
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          upstream_branch: 9.0.x
+          upstream_repo: apache/trafficserver
+          target_tag: patchup-9.0.x-netlify
