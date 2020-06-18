@@ -86,6 +86,44 @@ jobs:
           target_tag: patchup-7.1.x-netlify
           conflict_reviewers: "zxaos"
 
+  'update_8-1-x':
+    name: 'update 8.1.x from upstream'
+    runs-on: ubuntu-latest
+    steps:
+      - name: clone repo
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+      - name: rebase upstream
+        uses: zxaos/patchup@v1
+        with:
+          local_branch: 8.1.x
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          upstream_branch: 8.1.x
+          upstream_repo: apache/trafficserver
+          target_tag: patchup-8.1.x
+          conflict_reviewers: "zxaos"
+
+  'update_8-1-x-netlify':
+    name: 'update 8.1.x-netlify from upstream'
+    runs-on: ubuntu-latest
+    steps:
+      - name: clone repo
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+      - name: rebase upstream
+        uses: zxaos/patchup@v1
+        with:
+          local_branch: 8.1.x-netlify
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          upstream_branch: 8.1.x
+          upstream_repo: apache/trafficserver
+          target_tag: patchup-8.1.x-netlify
+          conflict_reviewers: "zxaos"
+
   'update_9-0-x':
     name: 'update 9.0.x from upstream'
     runs-on: ubuntu-latest

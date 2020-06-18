@@ -11,6 +11,8 @@ This fork is maintained by [@netlify](https://github.com/netlify) to allow us to
 
 [view upstream 7.1.x branch](https://github.com/netlify/trafficserver/tree/7.1.x)
 
+[view upstream 8.1.x branch](https://github.com/netlify/trafficserver/tree/8.1.x)
+
 [view upstream 9.0.x branch](https://github.com/netlify/trafficserver/tree/9.0.x)
 
 ## Netlify branches
@@ -18,22 +20,32 @@ This fork is maintained by [@netlify](https://github.com/netlify) to allow us to
 
 [view netlify 7.1.x branch](https://github.com/netlify/trafficserver/tree/7.1.x-netlify)
 
+[view netlify 8.1.x branch](https://github.com/netlify/trafficserver/tree/8.1.x-netlify)
+
 [view netlify 9.0.x branch](https://github.com/netlify/trafficserver/tree/9.0.x-netlify)
 
 # Automation Notes
-This repo is automatically updated by [wei/pull](https://github.com/wei/pull).
+This repo is automatically updated by [zxaos/patchup](https://github.com/zxaos/patchup).
 
-While it shouldn't be necessary, you can also [manually check for upstream changes](https://pull.git.ci/process/netlify/trafficserver).
+While it shouldn't be necessary, you can also manually check for upstream changes by sending the repository dispatch API event with the `on-demand-check` event type:
+```
+curl -u username:oauth_token
+     -X "POST" "https://api.github.com/repos/netlify/trafficserver/dispatches" \
+     -H 'Content-Type: application/json; charset=utf-8' \
+     -d $'{ "event_type": "on-demand-check" }'
+```
 
 ## Branches
 Some branches directly track upstream. **if you commit to these branches, your changes will be lost**:
 * master
 * 7.1.x
+* 8.1.x
 * 9.0.x
 
 Instead, commits should be applied to the appropriate `-netlify` branches:
 * master-netlify
 * 7.1.x-netlify
+* 8.1.x-netlify
 * 9.0.x-netlify
 
 Commits on these branches will attepmt to be merged with upstream when possible.
