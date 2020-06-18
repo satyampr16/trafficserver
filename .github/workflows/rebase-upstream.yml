@@ -27,6 +27,7 @@ jobs:
           upstream_branch: master
           upstream_repo: apache/trafficserver
           target_tag: patchup-master
+          conflict_reviewers: "zxaos"
 
   'update_master-netlify':
     name: 'update master-netlify from upstream'
@@ -45,6 +46,7 @@ jobs:
           upstream_branch: master
           upstream_repo: apache/trafficserver
           target_tag: patchup-master-netlify
+          conflict_reviewers: "zxaos"
 
   'update_7-1-x':
     name: 'update 7.1.x from upstream'
@@ -63,6 +65,7 @@ jobs:
           upstream_branch: 7.1.x
           upstream_repo: apache/trafficserver
           target_tag: patchup-7.1.x
+          conflict_reviewers: "zxaos"
 
   'update_7-1-x-netlify':
     name: 'update 7.1.x-netlify from upstream'
@@ -81,6 +84,7 @@ jobs:
           upstream_branch: 7.1.x
           upstream_repo: apache/trafficserver
           target_tag: patchup-7.1.x-netlify
+          conflict_reviewers: "zxaos"
 
   'update_9-0-x':
     name: 'update 9.0.x from upstream'
@@ -99,6 +103,7 @@ jobs:
           upstream_branch: 9.0.x
           upstream_repo: apache/trafficserver
           target_tag: patchup-9.0.x
+          conflict_reviewers: "zxaos"
 
   'update_9-0-x-netlify':
     name: 'update 9.0.x-netlify from upstream'
@@ -117,3 +122,4 @@ jobs:
           upstream_branch: 9.0.x
           upstream_repo: apache/trafficserver
           target_tag: patchup-9.0.x-netlify
+          conflict_reviewers: "zxaos"
