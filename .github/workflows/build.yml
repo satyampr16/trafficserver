@@ -6,6 +6,7 @@ on:
       - 9.0.x-netlify
   pull_request:
     branches:
+      - readme-and-settings
       - 7.1.x-netlify
       - 9.0.x-netlify
 jobs:
@@ -37,20 +38,32 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        package-name: trafficserver-dev # Add non -dev to list later
-        build-type: [Debug, Release]
+        # TODO: Remove development files from non-dev form
+        package-name: [trafficserver-dev, trafficserver]
+        build-type: [Debug, Release, RelWithDebInfo]
         include:
           - build-type: Debug
-            AM_CXXFLAGS: "-Og -ggdb -fno-omit-frame-pointer"
+            build-flags: "-Og -ggdb -fno-omit-frame-pointer"
             CONFIGURE_OPTS: "--enable-asan --enable-debug"
             LSAN_OPTIONS: "detect_leaks=0"
           - build-type: Release
-            AM_CXXFLAGS: "-O2"
+            build-flags: "-O2 -DNDEBUG"
+          - build-type: RelWithDebInfo
+            build-flags: "-O2 -ggdb -DNDEBUG"
+    env:
+      CXX: g++-9
+      CC: gcc-9
     outputs:
       release: ${{ steps.info.release }}
     steps:
-      - name: Checkout
+      - name: Checkout Branch
         uses: actions/checkout@v2
+        if: github.base_ref != 'readme-and-settings'
+      - name: Checkout Branch
+        if: github.base_ref == 'readme-and-settings'
+        uses: actions/checkout@v2
+        with:
+          ref: 7.1.x-netlify
       - name: Setup Build Environment
         run: |
           sudo apt update && sudo apt -y upgrade
@@ -62,6 +75,7 @@ jobs:
         run: >
           sudo apt install -y
           libjpeg-turbo8-dev
+          libmysqlclient-dev
           libluajit-5.1-dev
           libyaml-cpp-dev
           libunwind8-dev
@@ -78,16 +92,33 @@ jobs:
           tcl-dev
       - name: Generate Configure Script
         run: autoreconf --install --force
-      - name: Create Build Directory # Might not be needed due to autoreconf!
-        run: mkdir -p ${{ github.workspace }}/build
       - name: Configure
-        run: ${{ github.workspace }}/configure --prefix=/opt/ts --enable-experimental-plugins
+        run: >-
+          ${{ github.workspace }}/configure
+          --prefix=/opt/ts
+          --enable-experimental-plugins
+          ${{ matrix.CONFIGURE_OPTS }}
         working-directory: ${{ github.workspace }}/build
         env:
-          AM_CXXFLAGS: "${{ matrix.AM_CXXFLAGS }} -std=c++17 -Wno-cpp -Wno-deprecated-copy"
-          CONFIGURE_OPTS: "${{ matrix.CONFIGURE_OPTS }}"
+          CXXFLAGS: >-
+            -std=c++17
+            -Wall
+            -Wextra
+            -Wno-deprecated-copy
+            -Wno-ignored-qualifiers
+            -Wno-unused-parameter
+            -Wno-format-truncation
+            -Wno-cast-function-type
+            -Wno-stringop-overflow
+            -Wno-invalid-offsetof
+            -Wno-cpp
+            -fno-strict-aliasing
+            -Dmy_bool=int
+            -mcx16
+            ${{ matrix.build-flags }}
       - name: Build TrafficServer
-        run: make -j
+        run: make -j VERBOSE=1
+        working-directory: ${{ github.workspace }}/build
         env:
           LSAN_OPTIONS: ${{ matrix.LSAN_OPTIONS }}
       - name: Acquire Package Info
@@ -106,9 +137,10 @@ jobs:
           echo "::set-output name=version::${version}"
       - name: Install to Staging Area
         run: make install DESTDIR=${{github.workspace}}/${{ steps.info.outputs.package }}
+        working-directory: ${{ github.workspace }}/build
       - name: Generate Package Manifest # NOTE: We use an epoch (1:) because we differ from ubuntu versioning
         run: |-
-          mkdir -p ${{steps.info.outputs.package}}/DEBIAN/control
+          mkdir -p ${{steps.info.outputs.package}}/DEBIAN
           tee ${{steps.info.outputs.package}}/DEBIAN/control <<- EOF
           Package: netlify-${{ matrix.package-name}}
           Section: devel
