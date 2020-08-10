@@ -22,24 +22,27 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           path: packages
+      - name: Display Artifacts
+        run: ls -R
       - name: Display Build Step Outputs
         run: |-
           echo "release: ${{ needs.build.outputs.release }}"
           echo "version: ${{ needs.build.outputs.version }}"
-      - name: Fixup Package Versions and Filenames
-        id: fixup
+      - name: Generate Fixup Script
         run: |-
           tee fixup.sh <<- EOF
             set -e
-            echo Fixing up $PWD/$(basename $1)
+            echo Fixing up ${{ github.workspace }}/$(basename $1)
             fakeroot mkdir -p tmp
             fakeroot dpkg-deb -R $1 tmp
             sed -i '$s:netlify.*:${{ needs.build.outputs.release}}:' tmp/DEBIAN/control
             fakeroot dpkg-deb --build tmp temporary.deb
             fakeroot dpkg-name temporary.deb
-            rm $PWD/$1 # prevent duplicates
+            rm $1 # prevent duplicates
           EOF
-          find . -type f -name "*.deb" -execdir bash $PWD/fixup.sh {} +
+      - name: Fixup Package Versions and Filenames
+        id: fixup
+        run: find . -type f -name "*.deb" -execdir bash ${{ github.workspace }}/fixup.sh {} +
       #- name: Create Release
       #  uses: actions/create-release@v1
       #  id: create-release
