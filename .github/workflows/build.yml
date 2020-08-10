@@ -28,21 +28,25 @@ jobs:
         run: |-
           echo "release: ${{ needs.build.outputs.release }}"
           echo "version: ${{ needs.build.outputs.version }}"
-      - name: Generate Fixup Script
+      - name: Fixup Package Versions
+        shell: bash
         run: |-
-          tee fixup.sh <<- EOF
-            set -e
-            echo Fixing up ${{ github.workspace }}/$(basename $1)
+          shopt -s globstar
+          set -e
+          for package in ls **/**.deb
+          do
+            directory=$(dirname ${package})
+            filename=$(basename ${package})
+            pushd ${directory}
+            echo Fixing up ${package}
             fakeroot mkdir -p tmp
-            fakeroot dpkg-deb -R $1 tmp
+            fakeroot dpkg-deb -R ${filename}
             sed -i '$s:netlify.*:${{ needs.build.outputs.release}}:' tmp/DEBIAN/control
             fakeroot dpkg-deb --build tmp temporary.deb
             fakeroot dpkg-name temporary.deb
-            rm $1 # prevent duplicates
-          EOF
-      - name: Fixup Package Versions and Filenames
-        id: fixup
-        run: find . -type f -name "*.deb" -execdir bash ${{ github.workspace }}/fixup.sh {} \;
+            rm ${package}
+            popd
+          done
       #- name: Create Release
       #  uses: actions/create-release@v1
       #  id: create-release
@@ -58,7 +62,7 @@ jobs:
           script: |
             const fs = require('fs');
             const contentType = 'application/vnd.debian.binary-package';
-            const uploadUrl = '';#'${{ steps.create-release.outputs.upload_url }}';
+            const uploadUrl = ''; //'${{ steps.create-release.outputs.upload_url }}';
             const directories = ['Debug', 'Release', 'RelWithDebInfo']
               .flatMap(build => [`trafficserver-dev-${build}`, `trafficserver-${build}`]);
 
