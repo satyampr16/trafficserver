@@ -31,8 +31,9 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
       - name: Display Build Step Outputs
-        run: echo "release: ${{ needs.build.outputs.release }}"
-        run: echo "version: ${{ needs.build.outputs.version }}"
+        run: |-
+          echo "release: ${{ needs.build.outputs.release }}"
+          echo "version: ${{ needs.build.outputs.version }}"
       #      - name: Create Release
       #        uses: actions/create-release@v1
       #        id: create-release
