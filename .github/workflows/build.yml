@@ -26,7 +26,7 @@ jobs:
         id: info
         run: |-
           revision= $(date -u +'%Y.%m.%d')~
-          tag=$(git rev-parse --short ${{github.sha}})
+          #tag=$(git rev-parse --short ${{github.sha}})
           echo "::set-output name=release::+netlify-${revision}~${tag}"
       - name: Display structure of downloaded files
         run: ls -R
