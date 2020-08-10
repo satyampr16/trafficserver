@@ -33,7 +33,7 @@ jobs:
         run: |-
           shopt -s globstar
           set -e
-          for package in ls **/**.deb
+          for package in $(ls ${{github.workspace}}/packages/**/**.deb)
           do
             directory=$(dirname ${package})
             filename=$(basename ${package})
