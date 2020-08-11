@@ -53,7 +53,7 @@ jobs:
         id: create-release
         with:
           release_name: ${{ needs.build.outputs.version }}
-          prerelease: ${{ github.event_name == "pull_request" }}
+          prerelease: ${{ github.event_name == 'pull_request' }}
           tag_name: ${{needs.build.outputs.version}}-${{ needs.build.outputs.release }}
       - name: Upload Debian Package
         uses: actions/github-script@v2
