@@ -40,7 +40,7 @@ jobs:
             pushd ${directory}
             echo Fixing up ${package}
             fakeroot mkdir -p tmp
-            fakeroot dpkg-deb -R ${package}
+            fakeroot dpkg-deb -R ${package} tmp
             sed -i '$s:netlify.*:${{ needs.build.outputs.release}}:' tmp/DEBIAN/control
             fakeroot dpkg-deb --build tmp temporary.deb
             fakeroot dpkg-name temporary.deb
