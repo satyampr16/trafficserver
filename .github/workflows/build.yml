@@ -59,7 +59,7 @@ jobs:
         uses: actions/github-script@v2
         with:
           result-encoding: json
-          script: |
+          script: |-
             const fs = require('fs');
             const contentType = 'application/vnd.debian.binary-package';
             const uploadUrl = ''; //'${{ steps.create-release.outputs.upload_url }}';
@@ -78,7 +78,7 @@ jobs:
                   file: fs.readFileSync(file)
                 };
                 core.info(`${inputs}`);
-                #const response = await github.repos.uploadReleaseAsset(inputs);
+                //const response = await github.repos.uploadReleaseAsset(inputs);
               }
             }
 
