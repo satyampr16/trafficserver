@@ -45,6 +45,7 @@ jobs:
             fakeroot dpkg-deb --build tmp temporary.deb
             fakeroot dpkg-name temporary.deb
             rm ${filename}
+            rm -r tmp
             popd
           done
       #- name: Create Release
