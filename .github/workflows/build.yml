@@ -215,6 +215,7 @@ jobs:
             libhwloc15,
             libunwind8,
             libgeoip1,
+            libtcl8.6,
             libcurl4,
             liblzma5,
             libpcre3,
