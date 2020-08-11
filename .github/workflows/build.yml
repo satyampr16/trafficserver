@@ -44,7 +44,7 @@ jobs:
             sed -i '$s:netlify.*:${{ needs.build.outputs.release}}:' tmp/DEBIAN/control
             fakeroot dpkg-deb --build tmp temporary.deb
             fakeroot dpkg-name temporary.deb
-            rm ${package}
+            rm ${filename}
             popd
           done
       #- name: Create Release
