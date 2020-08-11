@@ -70,7 +70,9 @@ jobs:
             for (const directory of directories) {
               for (const file of fs.readdirSync(`${{github.workspace}}/packages/${directory}`)) {
                 const path = `${{github.workspace}}/packages/${directory}/${file}`
+                core.info(`Reading ${path}`)
                 const contentLength = fs.statSync(path).size;
+                core.info(`contentLength: ${contentLength}`);
                 const headers = { 'content-type': contentType, 'content-length': contentLength };
                 const inputs = {
                   url: uploadUrl,
