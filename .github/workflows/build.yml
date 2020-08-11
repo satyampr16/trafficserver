@@ -22,6 +22,13 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           path: packages
+      - name: Generate Package Version
+        id: package
+        run: |-
+          seconds=$(date -u --date="1970-01-01 UTC $(date -u +%T)" +%s)
+          release=netlify+$(date +'%Y.%m.%d')
+          echo "::set-output name=release::${release}~${seconds}"
+          echo "::set-output name=tag::${release}.${seconds}"
       - name: Display Artifacts
         run: ls -R
       - name: Display Build Step Outputs
@@ -41,7 +48,7 @@ jobs:
             echo Fixing up ${package}
             fakeroot mkdir -p tmp
             fakeroot dpkg-deb -R ${filename} tmp
-            sed -i '$s:netlify.*:${{ needs.build.outputs.release}}:' tmp/DEBIAN/control
+            sed -i '$s:netlify.*:${{ steps.package.outputs.release }}:' tmp/DEBIAN/control
             fakeroot dpkg-deb --build tmp temporary.deb
             fakeroot dpkg-name temporary.deb
             rm ${filename}
@@ -56,7 +63,7 @@ jobs:
         with:
           release_name: ${{ needs.build.outputs.version }}
           prerelease: ${{ github.event_name == 'pull_request' }}
-          tag_name: ${{needs.build.outputs.version}}-${{ needs.build.outputs.release }}
+          tag_name: ${{needs.build.outputs.version}}-${{ steps.package.outputs.tag }}
       - name: Upload Debian Package
         uses: actions/github-script@v2
         with:
