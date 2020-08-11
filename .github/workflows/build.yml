@@ -48,14 +48,13 @@ jobs:
             rm -r tmp
             popd
           done
-      #- name: Create Release
-      #  uses: actions/create-release@v1
-      #  id: create-release
-      #  with:
-      #    release_name: ${{ needs.build.outputs.version }}
-      #    prerelease: ${{ github.event_name == "pull_request" }}
-      #    tag_name: ${{ github.ref }}
-      # We can't use upload-release-asset because there are multiple files
+      - name: Create Release
+        uses: actions/create-release@v1
+        id: create-release
+        with:
+          release_name: ${{ needs.build.outputs.version }}
+          prerelease: ${{ github.event_name == "pull_request" }}
+          tag_name: ${{needs.build.outputs.version}}-${{ needs.build.outputs.release }}
       - name: Upload Debian Package
         uses: actions/github-script@v2
         with:
@@ -63,10 +62,9 @@ jobs:
           script: |-
             const fs = require('fs');
             const contentType = 'application/vnd.debian.binary-package';
-            const uploadUrl = ''; //'${{ steps.create-release.outputs.upload_url }}';
+            const uploadUrl = '${{ steps.create-release.outputs.upload_url }}';
             const directories = ['Debug', 'Release', 'RelWithDebInfo']
               .flatMap(build => [`trafficserver-dev-${build}`, `trafficserver-${build}`]);
-
             // Get each file that we've uploaded as an artifact
             for (const directory of directories) {
               for (const file of fs.readdirSync(`${{github.workspace}}/packages/${directory}`)) {
@@ -82,8 +80,10 @@ jobs:
                   name: file,
                   file: fs.readFileSync(path)
                 };
-                core.info(`${inputs}`);
-                //const response = await github.repos.uploadReleaseAsset(inputs);
+                const {
+                  data: { browser_download_url: download_url }
+                } = await github.repos.uploadReleaseAsset(inputs);
+                core.info(`Asset ${file} with label ${directory} is available at ${download_url}`);
               }
             }
 
