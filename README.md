@@ -1,6 +1,8 @@
 # Apache Traffic Server
 Traffic Server is a high-performance building block for cloud services.  It's more than just a caching proxy server; it also has support for plugins to build large scale web applications.
 
+![Build](https://github.com/netlify/trafficserver/workflows/Build/badge.svg)
+
 See https://trafficserver.apache.org or upstream [apache/trafficserver](https://github.com/apache/trafficserver) for more information.
 
 # This Fork
