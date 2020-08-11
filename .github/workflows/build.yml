@@ -208,6 +208,7 @@ jobs:
             #!/bin/bash
             chown -R nobody:nogroup /opt/ts/var/log/trafficserver
           EOF
+          chmod 555 ${{steps.info.outputs.filename}}/DEBIAN/postinst
           tee ${{steps.info.outputs.filename}}/DEBIAN/control <<- EOF
           Package: netlify-${{ matrix.package-name}}
           Section: devel
