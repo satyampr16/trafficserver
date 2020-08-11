@@ -69,13 +69,15 @@ jobs:
             // Get each file that we've uploaded as an artifact
             for (const directory of directories) {
               for (const file of fs.readdirSync(`${{github.workspace}}/packages/${directory}`)) {
-                const contentLength = fs.statSync(file).size;
+                const path = `${{github.workspace}}/packages/${directory}/${file}`
+                const contentLength = fs.statSync(path).size;
                 const headers = { 'content-type': contentType, 'content-length': contentLength };
                 const inputs = {
                   url: uploadUrl,
                   headers,
+                  label: directory,
                   name: file,
-                  file: fs.readFileSync(file)
+                  file: fs.readFileSync(path)
                 };
                 core.info(`${inputs}`);
                 //const response = await github.repos.uploadReleaseAsset(inputs);
