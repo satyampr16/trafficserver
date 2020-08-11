@@ -211,8 +211,8 @@ jobs:
           Architecture: amd64
           Maintainer: Isabella Muerte <imuerte>
           Depends: libssl1.1,
-            libluajit-5.1.2,
-            libhwlock15,
+            libluajit-5.1-2,
+            libhwloc15,
             libunwind8,
             libgeoip1,
             libcurl4,
