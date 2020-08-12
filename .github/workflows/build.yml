@@ -1,5 +1,10 @@
 name: Build
 on:
+  workflow_dispatch:
+    prerelease:
+      description: "Is this a pre-release? (yes/no)"
+      required: true
+      default: "yes"
   push:
     branches:
       - 7.1.x-netlify
@@ -9,14 +14,11 @@ on:
       - readme-and-settings
       - 7.1.x-netlify
       - 9.0.x-netlify
-  schedule:
-    - cron: '5, 1,12 * * *'
 jobs:
   package:
     name: Package
     needs: build
     runs-on: ubuntu-20.04
-    #if: github.event_name == "push"
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v2
@@ -62,7 +64,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           release_name: ${{ needs.build.outputs.version }}-${{steps.package.outputs.tag}}
-          prerelease: ${{ github.event_name == 'pull_request' }}
+          prerelease: ${{ github.event_name == 'pull_request' || github.event.inputs.prerelease == 'yes' }}
           tag_name: ${{needs.build.outputs.version}}-${{ steps.package.outputs.tag }}
       - name: Upload Debian Package
         uses: actions/github-script@v2
@@ -123,9 +125,9 @@ jobs:
     steps:
       - name: Checkout Branch
         uses: actions/checkout@v2
-        if: github.base_ref != 'readme-and-settings'
+        if: github.base_ref != 'readme-and-settings' || github.ref != 'readme-and-settings'
       - name: Checkout Branch
-        if: github.base_ref == 'readme-and-settings'
+        if: github.base_ref == 'readme-and-settings' || github.ref == 'readme-and-settings'
         uses: actions/checkout@v2
         with:
           ref: 7.1.x-netlify
