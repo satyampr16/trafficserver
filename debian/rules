@@ -1,30 +1,15 @@
 #!/usr/bin/make -f
 
+GITHUB_WORKSPACE ?= $(shell git rev-parse --show-toplevel)
 NETLIFY_PREFIX ?= /opt/ts
+MAKE_DIRECTORY := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 
-# TODO: consider placing these into a .mk file to simply be included
-config :=
-
-config += $(if $(filter relwithdebinfo, $(DEB_BUILD_PROFILES)), -O2 -ggdb -DNDEBUG)
-config += $(if $(filter release, $(DEB_BUILD_PROFILES)), -O2 -DNDEBUG)
-config += $(if $(filter debug, $(DEB_BUILD_PROFILES)), -Og -UNDEBUG -ggdb -fno-omit-frame-pointer)
-
-# TODO: consider placing these into a .mk file to simply be included
-diagnostics-allow :=
-diagnostics-warn :=
-diagnostics :=
-
-diagnostics-allow += ignored-qualifiers cast-function-type stringop-overflow
-diagnostics-allow += format-truncation invalid-offsetof unused-parameter
-diagnostics-allow += deprecated-copy cpp class-memaccess
-
-diagnostics-warn += all extra
-
-diagnostics += $(addprefix -Wno-,$(diagnostics-allow))
-diagnostics += $(addprefix -W,$(diagnostics-warn))
+include ${MAKE_DIRECTORY}/diagnostics.mk
+include ${MAKE_DIRECTORY}/profiles.mk
 
 export DEB_CXXFLAGS_MAINT_PREPEND = -std=c++17 -Dmy_bool=int
-export DEB_CXXFLAGS_MAINT_APPEND = $(diagnostics) $(config)
+export DEB_CXXFLAGS_MAINT_APPEND = $(diagnostics) $(profiles)
+# Currently 7.1.x cannot correctly link without it
 #export DEB_LDFLAGS_MAINT_APPEND = -fuse-ld=lld
 
 export DEB_BUILD_OPTIONS += nocheck
@@ -56,3 +41,6 @@ override_dh_auto_build:
 
 override_dh_auto_install:
 	dh_auto_install -- INSTALLDIRS=vendor
+
+override_dh_builddeb:
+	dh_builddeb --destdir=${GITHUB_WORKSPACE}

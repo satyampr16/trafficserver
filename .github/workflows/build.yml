@@ -18,6 +18,9 @@ on:
       - readme-and-settings
       - 7.1.x-netlify
       - 9.0.x-netlify
+env:
+  DPKG_COLORS: always
+  TZ: UTC
 jobs:
   calendar:
     name: Date and Time
@@ -29,11 +32,10 @@ jobs:
       - name: Get Current Date
         id: datetime
         run: |-
-          time=$(date --utc --date "1970-01-01 UTC $(date --utc +%T)" +%s)
-          date=$(date --utc +%Y.%m.%d)
+          time=$(date --date "1970-01-01 $(date +%T)" +%s)
+          echo "::set-output name=timestamp::$(date --iso-8601=seconds)"
+          echo "::set-output name=date::$(date --utc +%Y.%m.%d)"
           echo "::set-output name=time::${time}"
-          echo "::set-output name=date::${date}"
-          echo "::set-output name=timestamp::$(date --utc --iso-8601=seconds)")
   build:
     name: Build TrafficServer
     needs: calendar
@@ -45,10 +47,6 @@ jobs:
     env:
       DEBFULLNAME: 'github-actions[bot]'
       DEBEMAIL: '41898282+github-actions[bot]@users.noreply.github.com'
-      DPKG_COLORS: always
-      TZ: UTC
-      CXX: g++-9
-      CC: gcc-9
     outputs:
       version: ${{ steps.info.outputs.version }}
       release: ${{ steps.info.outputs.release }}
@@ -57,6 +55,17 @@ jobs:
         run: |-
           sudo apt update && sudo apt -y upgrade
           sudo apt-get install --yes build-essential devscripts ccache git-buildpackage
+      - name: Setup GitHub Actions Bot
+        run: |-
+          git config --global user.name "$DEBFULLNAME"
+          git config --global user.email "$DEBEMAIL"
+      - name: Setup Build Artifact Cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.HOME }}/.ccache
+          key: ccache-${{ matrix.profile }}-${{ github.base_ref }}-${{ needs.calendar.outputs.timestamp }}
+          restore-keys:
+            ccache-${{matrix.profile}}-${{github.base_ref}}-
       - name: Checkout PR Branch
         uses: actions/checkout@v2
         if: github.base_ref != 'readme-and-settings' || github.ref != 'readme-and-settings'
@@ -65,17 +74,6 @@ jobs:
         if: github.base_ref == 'readme-and-settings' || github.ref == 'readme-and-settings'
         with:
           ref: 7.1.x-netlify
-      - name: Setup GitHub Actions Bot
-        run: |-
-          git config user.name "$DEBFULLNAME"
-          git config user.email "$DEBEMAIL"
-      - name: Setup Build Artifact Cache
-        uses: actions/cache@v2
-        with:
-          path: ${{ env.HOME }}/.ccache
-          key: ccache-${{ matrix.profile }}-${{ github.base_ref }}-${{ needs.calendar.outputs.timestamp }}
-          restore-keys:
-            ccache-${{matrix.profile}}-${{github.base_ref}}-
       # TODO: Put this into a maintainer script of some kind :P
       # NOTE: Some of the information here might be wrong for the --since field
       #- name: Update Changelog
