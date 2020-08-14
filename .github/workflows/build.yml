@@ -42,7 +42,8 @@ jobs:
       matrix:
         build-type: [debug, release, relwithdebinfo]
         # TODO: We might be able to move all of these 'flags' inside the rules
-        #       file and depend on DEB_BUILD_PROFILES
+        #       file and depend on DEB_BUILD_PROFILES (this would be passed
+        #       as --build-profile under build package)
         include:
           - build-type: debug
             configure: '--enable-asan --enable-debug'
@@ -90,36 +91,27 @@ jobs:
             --new-version=1:${{steps.info.outputs.extracted-version }}-${{matrix.build-type}}+${{needs.calendar.outputs.date}}~${{needs.calendar.outputs.time}}
             --spawn-editor=never
             --since=${{ github.ref }}
-      - name: Build Package
-        run: gbp buildpackage
-    steps:
-      - name: Build TrafficServer
-        run: make -j VERBOSE=1
-        working-directory: ${{ github.workspace }}/build
-        env:
-          LSAN_OPTIONS: ${{ matrix.LSAN_OPTIONS }}
-      - name: Acquire Package Info
-        working-directory: ${{ github.workspace }}/build
-        shell: bash
-        id: info
-        run: |-
-          traffic_ctl=$(find $PWD -name traffic_ctl \( ! -regex '.*/\..*' \) -type f -executable)
-          seconds=$(date -u --date="1970-01-01 UTC $(date -u +%T)" +%s)
-          release=netlify+$(date +'%Y.%m.%d')~${seconds}
-          version=$(${traffic_ctl} --version | sed -E 's/[^0-9]+(([0-9]+[.]){2}[0-9]+).*$/\1/')
-          echo "::set-output name=filename::${{ matrix.package-name }}_${version}_amd64"
-          echo "::set-output name=version::${version}"
-          echo "::set-output name=release::${release}"
-      - name: Install to Staging Area
-        run: make install DESTDIR=${{github.workspace}}/${{ steps.info.outputs.filename }}
-        working-directory: ${{ github.workspace }}/build
-      - name: Create Debian Package
-        run: dpkg-deb --build --verbose ${{ steps.info.outputs.filename }}
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v2
+      # An awful hack for now :(
+      - name: Select Upstream Branch
+        uses: haya14busa/action-cond@v1
+        id: upstream
         with:
-          name: ${{ matrix.package-name }}-${{matrix.build-type}}
-          path: ${{ github.workspace }}/**/*.deb
+          if_false:
+          if_true: ${{ github.base_ref }}
+          cond: ${{ github.event_name == 'pull-request' && github.base_ref != 'readme-and-settings' }}
+      - name: Build Package
+        run: >-
+          gbp buildpackage
+          --git-verbose
+          --git-debian-branch=${{github.ref}}
+          --git-upstream-tag=${{steps.upstream.outputs.value}}
+          --build-profile=${{matrix.build-type}}
+          #    steps:
+          #      - name: Upload Build Artifacts
+          #        uses: actions/upload-artifact@v2
+          #        with:
+          #          name: ${{ matrix.package-name }}-${{matrix.build-type}}
+          #          path: ${{ github.workspace }}/**/*.deb
   package:
     name: Package
     needs: build
@@ -129,19 +121,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           path: packages
-      - name: Generate Package Version
-        id: package
-        run: |-
-          seconds=$(date -u --date="1970-01-01 UTC $(date -u +%T)" +%s)
-          release=netlify+$(date +'%Y.%m.%d')
-          echo "::set-output name=release::${release}~${seconds}"
-          echo "::set-output name=tag::${release}.${seconds}"
-      - name: Display Artifacts
-        run: ls -R
-      - name: Display Build Step Outputs
-        run: |-
-          echo "release: ${{ needs.build.outputs.release }}"
-          echo "version: ${{ needs.build.outputs.version }}"
       - name: Fixup Package Versions
         shell: bash
         run: |-

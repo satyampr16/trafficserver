@@ -36,11 +36,12 @@ override_dh_auto_configure:
 		--sysconfdir=\$${prefix}/etc/trafficserver \
 		--libdir=\$${prefix}/lib/trafficserver \
 		--libexecdir=\$${prefix}/libexec/trafficserver/modules \
+		--with-user=root \
+		--with-group=root \
 		--enable-layout=Debian \
 		--enable-wccp \
-		--disable-silent-rules \
-		--with-user=root \
-		--with-group=root
+		$(if $(filter debug,$(DEB_BUILD_PROFILES),--enable-debug --enable-asan)) \
+		--disable-silent-rules
 
 override_dh_auto_build:
 	$(MAKE) -j
