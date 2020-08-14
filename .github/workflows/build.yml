@@ -91,11 +91,18 @@ jobs:
           if_false: 7.1.x-netlify
           if_true: ${{ github.base_ref }}
           cond: ${{ github.event_name == 'pull-request' && github.base_ref != 'readme-and-settings' }}
+      - name: Select Debian Branch
+        uses: haya14busa/action-cond@v1
+        id: debian
+        with:
+          if_false: 7.1.x-netlify
+          if_true: ${{ github.head_ref }}
+          cond: ${{ github.event_name == 'pull-request' && github.base_ref != 'readme-and-settings' }}
       - name: Build Package
         run: >-
           gbp buildpackage
           --git-verbose
-          --git-debian-branch=${{github.ref}}
+          --git-debian-branch=${{github.base_ref}}
           --git-upstream-tag=${{steps.upstream.outputs.value}}
           --build-profiles=${{matrix.profile}}
 #    steps:
