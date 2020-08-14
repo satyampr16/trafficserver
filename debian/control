@@ -1,0 +1,40 @@
+Source: netlify-trafficserver
+Section: httpd
+Priority: optional
+Maintainer: Isabella Muerte <imuerte>
+Standards-Version: 4.0.0
+Build-Depends: debhelper-compat (= 12), dh-autoreconf,
+  libjpeg-turbo8-dev,
+  libluajit-5.1-dev,
+  libyaml-cpp-dev,
+  libunwind8-dev,
+  libexpat1-dev,
+  libhwloc-dev,
+  libgeoip-dev,
+  libpcre3-dev,
+  liblzma-dev,
+  libcap-dev,
+  libssl-dev,
+  libb64-dev,
+  libpng-dev,
+  zlib1g-dev,
+  tcl-dev
+Homepage: https://trafficserver.apache.org/
+Vcs-Browser: https://github.com/netlify/trafficserver
+Vcs-Git: https://github.com/netlify/trafficserver.git
+
+Package: netlify-trafficserver
+Architecture: amd64
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Conflicts: trafficserver
+Replaces: trafficserver
+Breaks: trafficserver
+Description: Netlify TrafficServer Distribution
+ This is the Netlify Inc. fork of Apache TrafficServer
+
+Package: netlify-trafficserver-dev
+Architecture: amd64
+Depends: ${misc:Depends}, netlify-trafficserver (= ${binary:Version})
+Description: Netlify TrafficServer Distribution SDK
+ This package provides the Netlify, Inc. fork of the Apache TrafficServer
+ SDK.

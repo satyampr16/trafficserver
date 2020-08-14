@@ -1,0 +1,4 @@
+opt/ts/bin/tsxs
+opt/ts/include/*
+opt/ts/lib/trafficserver/lib*.so
+opt/ts/lib/trafficserver/pkgconfig/trafficserver.pc

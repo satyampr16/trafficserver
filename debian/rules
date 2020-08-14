@@ -1,0 +1,49 @@
+#!/usr/bin/make -f
+
+NETLIFY_PREFIX ?= /opt/ts
+
+diagnostics-allow :=
+diagnostics-warn :=
+diagnostics :=
+
+diagnostics-allow += ignored-qualifiers cast-function-type stringop-overflow
+diagnostics-allow += format-truncation invalid-offsetof unused-parameter
+diagnostics-allow += deprecated-copy cpp class-memaccess
+
+diagnostics-warn += all extra
+
+diagnostics += $(addprefix -Wno-,$(diagnostics-allow))
+diagnostics += $(addprefix -W,$(diagnostics-warn))
+
+export DEB_CXXFLAGS_MAINT_PREPEND = -std=c++17 -Dmy_bool=int
+export DEB_CXXFLAGS_MAINT_APPEND = $(diagnostics)
+#export DEB_LDFLAGS_MAINT_APPEND = -fuse-ld=lld
+
+export DEB_BUILD_OPTIONS += nocheck
+export DEB_VENDOR = Netlify
+#export DH_VERBOSE = 1
+
+%:
+	dh $@ --with autoreconf
+
+execute_after_dh_fixperms:
+	chown -R nobody:nogroup debian/netlify-trafficserver/${NETLIFY_PREFIX}/var/log/trafficserver
+
+override_dh_auto_configure:
+	dh_auto_configure -- \
+		--config-cache \
+		--prefix=${NETLIFY_PREFIX} \
+		--sysconfdir=\$${prefix}/etc/trafficserver \
+		--libdir=\$${prefix}/lib/trafficserver \
+		--libexecdir=\$${prefix}/libexec/trafficserver/modules \
+		--enable-layout=Debian \
+		--enable-wccp \
+		--disable-silent-rules \
+		--with-user=root \
+		--with-group=root
+
+override_dh_auto_build:
+	$(MAKE) -j
+
+override_dh_auto_install:
+	dh_auto_install -- INSTALLDIRS=vendor
