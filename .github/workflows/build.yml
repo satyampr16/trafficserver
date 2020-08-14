@@ -98,80 +98,80 @@ jobs:
           --git-debian-branch=${{github.ref}}
           --git-upstream-tag=${{steps.upstream.outputs.value}}
           --build-profiles=${{matrix.profile}}
-          #    steps:
-          #      - name: Upload Build Artifacts
-          #        uses: actions/upload-artifact@v2
-          #        with:
-          #          name: ${{ matrix.package-name }}-${{matrix.profile}}
-          #          path: ${{ github.workspace }}/**/*.deb
-          #  package:
-          #    name: Package
-          #    needs: build
-          #    runs-on: ubuntu-20.04
-          #    steps:
-          #      - name: Download Artifacts
-          #        uses: actions/download-artifact@v2
-          #        with:
-          #          path: packages
-          #      - name: Fixup Package Versions
-          #        shell: bash
-          #        run: |-
-          #          shopt -s globstar
-          #          set -e
-          #          for package in **/**.deb
-          #          do
-          #            directory=$(dirname ${package})
-          #            filename=$(basename ${package})
-          #            pushd ${directory}
-          #            echo Fixing up ${package}
-          #            fakeroot mkdir -p tmp
-          #            fakeroot dpkg-deb -R ${filename} tmp
-          #            sed -i '$s:netlify.*:${{ steps.package.outputs.release }}:' tmp/DEBIAN/control
-          #            fakeroot dpkg-deb --build tmp temporary.deb
-          #            fakeroot dpkg-name temporary.deb
-          #            rm ${filename}
-          #            rm -r tmp
-          #            popd
-          #          done
-          #      - name: Create Release
-          #        uses: actions/create-release@v1
-          #        id: create-release
-          #        env:
-          #          GITHUB_TOKEN: ${{ github.token }}
-          #        with:
-          #          release_name: ${{ needs.build.outputs.version }}-${{steps.package.outputs.tag}}
-          #          prerelease: ${{ github.event_name == 'pull_request' || github.event.inputs.prerelease == 'yes' }}
-          #          tag_name: ${{needs.build.outputs.version}}-${{ steps.package.outputs.tag }}
-          #      - name: Upload Debian Package
-          #        uses: actions/github-script@v2
-          #        with:
-          #          result-encoding: json
-          #          script: |-
-          #            const fs = require('fs');
-          #            const contentType = 'application/vnd.debian.binary-package';
-          #            const uploadUrl = '${{ steps.create-release.outputs.upload_url }}';
-          #            for (const build_type of ['Debug', 'Release', 'RelWithDebInfo']) {
-          #              // Get each file that we've uploaded as an artifact
-          #              for (const directory of [`trafficserver-dev-${build_type}`, `trafficserver-${build_type}`]) {
-          #                for (const file of fs.readdirSync(`${{github.workspace}}/packages/${directory}`)) {
-          #                  const path = `${{github.workspace}}/packages/${directory}/${file}`
-          #                  core.info(`Reading ${path}`)
-          #                  const contentLength = fs.statSync(path).size;
-          #                  core.info(`contentLength: ${contentLength}`);
-          #                  const headers = { 'content-type': contentType, 'content-length': contentLength };
-          #                  const inputs = {
-          #                    url: uploadUrl,
-          #                    headers,
-          #                    label: directory,
-          #                    name: `${build_type}-${file}`,
-          #                    data: fs.readFileSync(path)
-          #                  };
-          #                  const {
-          #                    data: { browser_download_url: download_url }
-          #                  } = await github.repos.uploadReleaseAsset(inputs);
-          #                  core.info(`Asset ${file} with label ${directory} is available at ${download_url}`);
-          #                }
-          #              }
-          #            }
-          #
-          #
+#    steps:
+#      - name: Upload Build Artifacts
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: ${{ matrix.package-name }}-${{matrix.profile}}
+#          path: ${{ github.workspace }}/**/*.deb
+#  package:
+#    name: Package
+#    needs: build
+#    runs-on: ubuntu-20.04
+#    steps:
+#      - name: Download Artifacts
+#        uses: actions/download-artifact@v2
+#        with:
+#          path: packages
+#      - name: Fixup Package Versions
+#        shell: bash
+#        run: |-
+#          shopt -s globstar
+#          set -e
+#          for package in **/**.deb
+#          do
+#            directory=$(dirname ${package})
+#            filename=$(basename ${package})
+#            pushd ${directory}
+#            echo Fixing up ${package}
+#            fakeroot mkdir -p tmp
+#            fakeroot dpkg-deb -R ${filename} tmp
+#            sed -i '$s:netlify.*:${{ steps.package.outputs.release }}:' tmp/DEBIAN/control
+#            fakeroot dpkg-deb --build tmp temporary.deb
+#            fakeroot dpkg-name temporary.deb
+#            rm ${filename}
+#            rm -r tmp
+#            popd
+#          done
+#      - name: Create Release
+#        uses: actions/create-release@v1
+#        id: create-release
+#        env:
+#          GITHUB_TOKEN: ${{ github.token }}
+#        with:
+#          release_name: ${{ needs.build.outputs.version }}-${{steps.package.outputs.tag}}
+#          prerelease: ${{ github.event_name == 'pull_request' || github.event.inputs.prerelease == 'yes' }}
+#          tag_name: ${{needs.build.outputs.version}}-${{ steps.package.outputs.tag }}
+#      - name: Upload Debian Package
+#        uses: actions/github-script@v2
+#        with:
+#          result-encoding: json
+#          script: |-
+#            const fs = require('fs');
+#            const contentType = 'application/vnd.debian.binary-package';
+#            const uploadUrl = '${{ steps.create-release.outputs.upload_url }}';
+#            for (const build_type of ['Debug', 'Release', 'RelWithDebInfo']) {
+#              // Get each file that we've uploaded as an artifact
+#              for (const directory of [`trafficserver-dev-${build_type}`, `trafficserver-${build_type}`]) {
+#                for (const file of fs.readdirSync(`${{github.workspace}}/packages/${directory}`)) {
+#                  const path = `${{github.workspace}}/packages/${directory}/${file}`
+#                  core.info(`Reading ${path}`)
+#                  const contentLength = fs.statSync(path).size;
+#                  core.info(`contentLength: ${contentLength}`);
+#                  const headers = { 'content-type': contentType, 'content-length': contentLength };
+#                  const inputs = {
+#                    url: uploadUrl,
+#                    headers,
+#                    label: directory,
+#                    name: `${build_type}-${file}`,
+#                    data: fs.readFileSync(path)
+#                  };
+#                  const {
+#                    data: { browser_download_url: download_url }
+#                  } = await github.repos.uploadReleaseAsset(inputs);
+#                  core.info(`Asset ${file} with label ${directory} is available at ${download_url}`);
+#                }
+#              }
+#            }
+#
+#
