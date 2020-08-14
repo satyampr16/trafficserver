@@ -21,7 +21,7 @@ export DEB_CXXFLAGS_MAINT_APPEND = $(diagnostics)
 
 export DEB_BUILD_OPTIONS += nocheck
 export DEB_VENDOR = Netlify
-#export DH_VERBOSE = 1
+export DH_VERBOSE = 1
 
 %:
 	dh $@ --with autoreconf

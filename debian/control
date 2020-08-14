@@ -35,6 +35,9 @@ Description: Netlify TrafficServer Distribution
 Package: netlify-trafficserver-dev
 Architecture: amd64
 Depends: ${misc:Depends}, netlify-trafficserver (= ${binary:Version})
+Conflicts: trafficserver-dev
+Replaces: trafficserver-dev
+Breaks: trafficserver-dev
 Description: Netlify TrafficServer Distribution SDK
  This package provides the Netlify, Inc. fork of the Apache TrafficServer
  SDK.
