@@ -53,8 +53,10 @@ jobs:
     steps:
       - name: Setup Build Environment
         run: |-
-          sudo apt update && sudo apt -y upgrade
+          sudo apt-get update --quiet && sudo apt-get --yes --quiet upgrade
           sudo apt-get install --yes build-essential devscripts ccache git-buildpackage
+        env:
+          DEBIAN_FRONTEND: noninteractive
       - name: Setup GitHub Actions Bot
         run: |-
           git config --global user.name "$DEBFULLNAME"
@@ -75,7 +77,7 @@ jobs:
         with:
           ref: 7.1.x-netlify
       - name: Display Directory Layout
-        run: ls -R ${{github.workspace}}
+        run: ls ${{github.workspace}}
       - name: Select Upstream Branch
         uses: haya14busa/action-cond@v1
         id: upstream
@@ -95,11 +97,11 @@ jobs:
       # An awful hack for now :(
       - name: Build Package
         run: >-
-          gbp buildpackage
-          --git-verbose
-          --git-debian-branch=${{github.head_ref}}
-          --git-upstream-tag=${{steps.upstream.outputs.value}}
-          --build-profiles=${{matrix.profile}}
+          gbp buildpackage --help
+          #--git-verbose
+          #--git-debian-branch=${{github.head_ref}}
+          #--git-upstream-tag=${{steps.upstream.outputs.value}}
+          #--build-profiles=${{matrix.profile}}
 #    steps:
 #      - name: Upload Build Artifacts
 #        uses: actions/upload-artifact@v2
