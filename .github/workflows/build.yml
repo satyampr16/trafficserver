@@ -73,6 +73,7 @@ jobs:
         uses: actions/checkout@v2
         if: github.base_ref == '7.1.x-netlify' || github.base_ref == '9.0.x-netlify'
         with:
+          fetch-depth: 0
           clean: false
       - name: Checkout Debian Branch
         if: github.base_ref == '7.1.x-netlify' || github.base_ref == '9.0.x-netlify'
@@ -83,11 +84,12 @@ jobs:
         if: github.base_ref != '7.1.x-netlify' || github.base_ref != '9.0.x-netlify'
         uses: actions/checkout@v2
         with:
+          fetch-depth: 0
           ref: 7.1.x-netlify
           clean: false
       - name: Checkout Debian Branch
         if: github.base_ref != '7.1.x-netlify' || github.base_ref != '9.0.x-netlify'
-        run: git checkout ${{ github.base_ref }} -- debian
+        run: git checkout ${{ github.head_ref }} -- debian
 
       - name: Display Directory Layout
         run: ls ${{github.workspace}}
