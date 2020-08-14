@@ -68,11 +68,6 @@ jobs:
           key: ccache-${{ matrix.profile }}-${{ github.base_ref }}-${{ needs.calendar.outputs.timestamp }}
           restore-keys:
             ccache-${{matrix.profile}}-${{github.base_ref}}-
-#      - name: Checkout Upstream Branch
-#        uses: actions/checkout@v2
-#        if: github.base_ref == 'readme-and-settings'
-#        with:
-#          ref: 7.1.x-netlify
       # For PRs against our branch
       - name: Checkout Upstream Branch
         uses: actions/checkout@v2
@@ -81,10 +76,8 @@ jobs:
           clean: false
       - name: Checkout Debian Branch
         if: github.base_ref == '7.1.x-netlify' || github.base_ref == '9.0.x-netlify'
-        uses: actions/checkout@v2
-        with:
-          clean: false
-          ref: readme-and-settings
+        run: git checkout readme-and-settings -- debian
+
       # For manual testing/modifications to readme-and-settings branch
       - name: Checkout Upstream Branch
         if: github.base_ref != '7.1.x-netlify' || github.base_ref != '9.0.x-netlify'
@@ -94,9 +87,8 @@ jobs:
           clean: false
       - name: Checkout Debian Branch
         if: github.base_ref != '7.1.x-netlify' || github.base_ref != '9.0.x-netlify'
-        uses: actions/checkout@v2
-        with:
-          clean: false
+        run: git checkout ${{ github.base_ref }} -- debian
+
       - name: Display Directory Layout
         run: ls ${{github.workspace}}
       - name: Select Upstream Branch
