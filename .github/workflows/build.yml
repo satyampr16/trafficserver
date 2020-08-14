@@ -68,12 +68,21 @@ jobs:
             ccache-${{matrix.profile}}-${{github.base_ref}}-
       - name: Checkout PR Branch
         uses: actions/checkout@v2
-        if: github.base_ref != 'readme-and-settings' || github.ref != 'readme-and-settings'
+        if: github.base_ref != 'readme-and-settings' || github.head_ref != 'readme-and-settings'
       - name: Checkout Workflow Branch
         uses: actions/checkout@v2
-        if: github.base_ref == 'readme-and-settings' || github.ref == 'readme-and-settings'
+        if: github.base_ref == 'readme-and-settings' || github.head_ref == 'readme-and-settings'
         with:
           ref: 7.1.x-netlify
+      - name: Display Directory Layout
+        run: ls -R ${{github.workspace}}
+      - name: Select Upstream Branch
+        uses: haya14busa/action-cond@v1
+        id: upstream
+        with:
+          if_false: 7.1.x-netlify
+          if_true: ${{ github.base_ref }}
+          cond: ${{ github.event_name == 'pull-request' && github.base_ref != 'readme-and-settings' }}
       # TODO: Put this into a maintainer script of some kind :P
       # NOTE: Some of the information here might be wrong for the --since field
       #- name: Update Changelog
@@ -84,25 +93,11 @@ jobs:
       #      --spawn-editor=never
       #      --since=${{ github.ref }}
       # An awful hack for now :(
-      - name: Select Upstream Branch
-        uses: haya14busa/action-cond@v1
-        id: upstream
-        with:
-          if_false: 7.1.x-netlify
-          if_true: ${{ github.base_ref }}
-          cond: ${{ github.event_name == 'pull-request' && github.base_ref != 'readme-and-settings' }}
-      - name: Select Debian Branch
-        uses: haya14busa/action-cond@v1
-        id: debian
-        with:
-          if_false: 7.1.x-netlify
-          if_true: ${{ github.head_ref }}
-          cond: ${{ github.event_name == 'pull-request' && github.base_ref != 'readme-and-settings' }}
       - name: Build Package
         run: >-
           gbp buildpackage
           --git-verbose
-          --git-debian-branch=${{github.base_ref}}
+          --git-debian-branch=${{github.head_ref}}
           --git-upstream-tag=${{steps.upstream.outputs.value}}
           --build-profiles=${{matrix.profile}}
 #    steps:
