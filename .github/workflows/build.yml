@@ -54,7 +54,7 @@ jobs:
       - name: Setup Build Environment
         run: |-
           sudo apt-get update --quiet && sudo apt-get --yes --quiet upgrade
-          sudo apt-get install --yes build-essential devscripts ccache git-buildpackage
+          sudo apt-get install --yes build-essential devscripts ccache git-buildpackage equivs debhelper
         env:
           DEBIAN_FRONTEND: noninteractive
       - name: Setup GitHub Actions Bot
@@ -77,6 +77,8 @@ jobs:
       - name: Checkout Upstream Branch
         uses: actions/checkout@v2
         if: github.base_ref == '7.1.x-netlify' || github.base_ref == '9.0.x-netlify'
+        with:
+          clean: false
       - name: Checkout Debian Branch
         if: github.base_ref == '7.1.x-netlify' || github.base_ref == '9.0.x-netlify'
         uses: actions/checkout@v2
@@ -89,12 +91,12 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: 7.1.x-netlify
+          clean: false
       - name: Checkout Debian Branch
         if: github.base_ref != '7.1.x-netlify' || github.base_ref != '9.0.x-netlify'
         uses: actions/checkout@v2
         with:
           clean: false
-
       - name: Display Directory Layout
         run: ls ${{github.workspace}}
       - name: Select Upstream Branch
@@ -117,11 +119,11 @@ jobs:
       # An awful hack for now :(
       - name: Build Package
         run: >-
-          gbp buildpackage
-          --git-verbose
-          --git-debian-branch=${{github.head_ref}}
-          --git-upstream-tag=${{steps.upstream.outputs.value}}
-          --build-profiles=${{matrix.profile}}
+          gbp buildpackage --help
+          #--git-verbose
+          #--git-debian-branch=${{github.head_ref}}
+          #--git-upstream-tag=${{steps.upstream.outputs.value}}
+          #--build-profiles=${{matrix.profile}}
 #    steps
 #      - name: Upload Build Artifacts
 #        uses: actions/upload-artifact@v2
