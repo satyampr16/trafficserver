@@ -61,13 +61,16 @@ jobs:
         run: |-
           git config --global user.name "$DEBFULLNAME"
           git config --global user.email "$DEBEMAIL"
+      # NOTE: This doesn't appear to actually be working. Some investigation is
+      # needed. If it doesn't improve, we'll have to figure something else out.
+      # It doesn't help that the 
       - name: Setup Build Artifact Cache
         uses: actions/cache@v2
         with:
-          path: ${{ env.HOME }}/.ccache
-          key: ccache-${{ matrix.profile }}-${{ github.base_ref }}-${{ needs.calendar.outputs.timestamp }}
-          restore-keys:
-            ccache-${{matrix.profile}}-${{github.base_ref}}-
+          path: ${{env.HOME}}/.ccache
+          key: ${{matrix.profile}}-ccache-${{needs.calendar.outputs.timestamp}}
+          restore-keys: |
+            ${{matrix.profile}}-ccache-
       # For PRs against our branch
       - name: Checkout Upstream Branch
         uses: actions/checkout@v2
@@ -87,12 +90,13 @@ jobs:
           fetch-depth: 0
           ref: 7.1.x-netlify
           clean: false
+
       - name: Checkout Debian Branch
         if: github.base_ref != '7.1.x-netlify' || github.base_ref != '9.0.x-netlify'
         run: git checkout origin/${{ github.head_ref }} -- debian
+      - name: Check Staged Index (Debugging)
+        run: git status
 
-      - name: Display Directory Layout
-        run: ls ${{github.workspace}}
       - name: Select Upstream Branch
         uses: haya14busa/action-cond@v1
         id: upstream
@@ -100,6 +104,14 @@ jobs:
           if_false: 7.1.x-netlify
           if_true: ${{ github.base_ref }}
           cond: ${{ github.event_name == 'pull-request' && github.base_ref != 'readme-and-settings' }}
+      - name: Update Changelog Snapshot
+        if: github.event_name == 'pull-request' && github.base_ref != 'readme-and-settings'
+        run: >-
+          gbp dch
+          --debian-branch=${{github.head_ref}}
+          --distribution=stable
+          --spawn-editor=never
+          --since=${{github.base_ref}}
       # TODO: Put this into a maintainer script of some kind :P
       # NOTE: Some of the information here might be wrong for the --since field
 #     - name: Update Changelog
@@ -120,12 +132,8 @@ jobs:
           --build-profiles=${{matrix.profile}}
           --buildinfo-option=-u${GITHUB_WORKSPACE}
           --changes-option=-u${GITHUB_WORKSPACE}
-#    steps
-#      - name: Upload Build Artifacts
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: ${{ matrix.package-name }}-${{matrix.profile}}
-#          path: ${{ github.workspace }}/**/*.deb
+      - name: Display CCache Statistics (Debugging)
+        run: ccache --show-stats
 #  package:
 #    name: Package
 #    needs: build
