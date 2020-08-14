@@ -68,14 +68,33 @@ jobs:
           key: ccache-${{ matrix.profile }}-${{ github.base_ref }}-${{ needs.calendar.outputs.timestamp }}
           restore-keys:
             ccache-${{matrix.profile}}-${{github.base_ref}}-
-      - name: Checkout PR Branch
+#      - name: Checkout Upstream Branch
+#        uses: actions/checkout@v2
+#        if: github.base_ref == 'readme-and-settings'
+#        with:
+#          ref: 7.1.x-netlify
+      # For PRs against our branch
+      - name: Checkout Upstream Branch
         uses: actions/checkout@v2
-        if: github.base_ref != 'readme-and-settings' || github.head_ref != 'readme-and-settings'
-      - name: Checkout Workflow Branch
+        if: contains(['7.1.x-netlify', '9.0.x-netlify'], github.base_ref)
+      - name: Checkout Debian Branch
+        if: contains(['7.1.x-netlify', '9.0.x-netlify'], github.base_ref)
         uses: actions/checkout@v2
-        if: github.base_ref == 'readme-and-settings' || github.head_ref == 'readme-and-settings'
+        with:
+          clean: false
+          ref: readme-and-settings
+      # For manual testing/modifications to readme-and-settings branch
+      - name: Checkout Upstream Branch
+        if: "!contains('7.1.x-netlify', '9.0.x-netlify'], github.base_ref)"
+        uses: actions/checkout@v2
         with:
           ref: 7.1.x-netlify
+      - name: Checkout Debian Branch
+        if: "!contains('7.1.x-netlify', '9.0.x-netlify'], github.base_ref)"
+        uses: actions/checkout@v2
+        with:
+          clean: false
+
       - name: Display Directory Layout
         run: ls ${{github.workspace}}
       - name: Select Upstream Branch
@@ -87,22 +106,23 @@ jobs:
           cond: ${{ github.event_name == 'pull-request' && github.base_ref != 'readme-and-settings' }}
       # TODO: Put this into a maintainer script of some kind :P
       # NOTE: Some of the information here might be wrong for the --since field
-      #- name: Update Changelog
-      #  run: >-
-      #    gbp dch
-      #      --debian-branch=${{ format('{0}{1}', '{{ github.base_ref }}', '{{ github.event.inputs.branch }}') }}
-      #      --new-version=1:${{steps.info.outputs.extracted-version }}-${{matrix.profile}}+${{needs.calendar.outputs.date}}~${{needs.calendar.outputs.time}}
-      #      --spawn-editor=never
-      #      --since=${{ github.ref }}
+#     - name: Update Changelog
+#       run: >-
+#         gbp dch
+#           --debian-branch=${{ format('{0}{1}', \
+#           '{{ github.base_ref }}', '{{ github.event.inputs.branch }}') }}
+#           --new-version=1:${{steps.info.outputs.extracted-version }}-${{matrix.profile}}+${{needs.calendar.outputs.date}}~${{needs.calendar.outputs.time}}
+#           --spawn-editor=never
+#           --since=${{ github.ref }}
       # An awful hack for now :(
       - name: Build Package
         run: >-
-          gbp buildpackage --help
-          #--git-verbose
-          #--git-debian-branch=${{github.head_ref}}
-          #--git-upstream-tag=${{steps.upstream.outputs.value}}
-          #--build-profiles=${{matrix.profile}}
-#    steps:
+          gbp buildpackage
+          --git-verbose
+          --git-debian-branch=${{github.head_ref}}
+          --git-upstream-tag=${{steps.upstream.outputs.value}}
+          --build-profiles=${{matrix.profile}}
+#    steps
 #      - name: Upload Build Artifacts
 #        uses: actions/upload-artifact@v2
 #        with:
