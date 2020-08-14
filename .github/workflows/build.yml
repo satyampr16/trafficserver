@@ -119,11 +119,11 @@ jobs:
       # An awful hack for now :(
       - name: Build Package
         run: >-
-          gbp buildpackage --help
-          #--git-verbose
-          #--git-debian-branch=${{github.head_ref}}
-          #--git-upstream-tag=${{steps.upstream.outputs.value}}
-          #--build-profiles=${{matrix.profile}}
+          gbp buildpackage
+          --git-verbose
+          --git-debian-branch=${{github.head_ref}}
+          --git-upstream-tag=${{steps.upstream.outputs.value}}
+          --build-profiles=${{matrix.profile}}
 #    steps
 #      - name: Upload Build Artifacts
 #        uses: actions/upload-artifact@v2
