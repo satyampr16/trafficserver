@@ -118,6 +118,8 @@ jobs:
           --git-debian-branch=${{github.head_ref}}
           --git-upstream-tag=${{steps.upstream.outputs.value}}
           --build-profiles=${{matrix.profile}}
+          --buildinfo-option=-u${GITHUB_WORKSPACE}
+          --changes-option=-u${GITHUB_WORKSPACE}
 #    steps
 #      - name: Upload Build Artifacts
 #        uses: actions/upload-artifact@v2
