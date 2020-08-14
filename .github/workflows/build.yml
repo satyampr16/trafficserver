@@ -76,21 +76,21 @@ jobs:
       # For PRs against our branch
       - name: Checkout Upstream Branch
         uses: actions/checkout@v2
-        if: contains(['7.1.x-netlify', '9.0.x-netlify'], github.base_ref)
+        if: github.base_ref == '7.1.x-netlify' || github.base_ref == '9.0.x-netlify'
       - name: Checkout Debian Branch
-        if: contains(['7.1.x-netlify', '9.0.x-netlify'], github.base_ref)
+        if: github.base_ref == '7.1.x-netlify' || github.base_ref == '9.0.x-netlify'
         uses: actions/checkout@v2
         with:
           clean: false
           ref: readme-and-settings
       # For manual testing/modifications to readme-and-settings branch
       - name: Checkout Upstream Branch
-        if: "!contains('7.1.x-netlify', '9.0.x-netlify'], github.base_ref)"
+        if: github.base_ref != '7.1.x-netlify' || github.base_ref != '9.0.x-netlify'
         uses: actions/checkout@v2
         with:
           ref: 7.1.x-netlify
       - name: Checkout Debian Branch
-        if: "!contains('7.1.x-netlify', '9.0.x-netlify'], github.base_ref)"
+        if: github.base_ref != '7.1.x-netlify' || github.base_ref != '9.0.x-netlify'
         uses: actions/checkout@v2
         with:
           clean: false
