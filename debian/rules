@@ -2,6 +2,14 @@
 
 NETLIFY_PREFIX ?= /opt/ts
 
+# TODO: consider placing these into a .mk file to simply be included
+config :=
+
+config += $(if $(filter relwithdebinfo, $(DEB_BUILD_PROFILES)), -O2 -ggdb -DNDEBUG)
+config += $(if $(filter release, $(DEB_BUILD_PROFILES)), -O2 -DNDEBUG)
+config += $(if $(filter debug, $(DEB_BUILD_PROFILES)), -Og -UNDEBUG -ggdb -fno-omit-frame-pointer)
+
+# TODO: consider placing these into a .mk file to simply be included
 diagnostics-allow :=
 diagnostics-warn :=
 diagnostics :=
@@ -16,7 +24,7 @@ diagnostics += $(addprefix -Wno-,$(diagnostics-allow))
 diagnostics += $(addprefix -W,$(diagnostics-warn))
 
 export DEB_CXXFLAGS_MAINT_PREPEND = -std=c++17 -Dmy_bool=int
-export DEB_CXXFLAGS_MAINT_APPEND = $(diagnostics)
+export DEB_CXXFLAGS_MAINT_APPEND = $(diagnostics) $(config)
 #export DEB_LDFLAGS_MAINT_APPEND = -fuse-ld=lld
 
 export DEB_BUILD_OPTIONS += nocheck
@@ -40,7 +48,7 @@ override_dh_auto_configure:
 		--with-group=root \
 		--enable-layout=Debian \
 		--enable-wccp \
-		$(if $(filter debug,$(DEB_BUILD_PROFILES),--enable-debug --enable-asan)) \
+		$(if $(filter debug,$(DEB_BUILD_PROFILES)),--enable-debug) \
 		--disable-silent-rules
 
 override_dh_auto_build:
