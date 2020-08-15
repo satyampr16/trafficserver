@@ -22,6 +22,7 @@ env:
   DPKG_COLORS: always
   TZ: UTC
 jobs:
+  # This is done so that all packages in this build have the EXACT same timestamps + versions
   calendar:
     name: Date and Time
     runs-on: ubuntu-20.04
@@ -72,6 +73,7 @@ jobs:
             ${{matrix.profile}}-ccache-
       # TODO: Put most of this logic into a maintenance script.
       # GitHub Actions just don't serve our purpose too easily right now.
+      #
       # For PRs against our branch
       - name: Checkout Upstream Branch
         uses: actions/checkout@v2
@@ -82,7 +84,6 @@ jobs:
       - name: Checkout Debian Branch
         if: github.base_ref == '7.1.x-netlify' || github.base_ref == '9.0.x-netlify'
         run: git checkout origin/readme-and-settings -- debian
-
       # For manual testing/modifications to readme-and-settings branch
       - name: Checkout Upstream Branch
         if: github.base_ref != '7.1.x-netlify' || github.base_ref != '9.0.x-netlify'
@@ -91,13 +92,11 @@ jobs:
           fetch-depth: 0
           ref: 7.1.x-netlify
           clean: false
-
       - name: Checkout Debian Branch
         if: github.base_ref != '7.1.x-netlify' || github.base_ref != '9.0.x-netlify'
         run: git checkout origin/${{ github.head_ref }} -- debian
       - name: Check Staged Index (Debugging)
-        run: git status
-
+        run: git status && ls -la
       - name: Select Upstream Branch
         uses: haya14busa/action-cond@v1
         id: upstream
@@ -105,6 +104,7 @@ jobs:
           if_false: 7.1.x-netlify
           if_true: ${{ github.base_ref }}
           cond: ${{ github.event_name == 'pull-request' && github.base_ref != 'readme-and-settings' }}
+
       - name: Update Changelog Snapshot
         run: >-
           update-debian-changelog 
@@ -121,37 +121,19 @@ jobs:
           --build-profiles=${{matrix.profile}}
           --buildinfo-option=-u${GITHUB_WORKSPACE}
           --changes-option=-u${GITHUB_WORKSPACE}
-      - name: Display CCache Statistics (Debugging)
-        run: ccache --show-stats
+      - name: Create Release (WIP)
+        uses: actions/github-script@v2
+        with:
+          script: |-
+            console.log('WIP')
+#      - name: Display CCache Statistics (Debugging)
+#        run: ccache --show-stats
+#
 #  package:
 #    name: Package
 #    needs: build
 #    runs-on: ubuntu-20.04
 #    steps:
-#      - name: Download Artifacts
-#        uses: actions/download-artifact@v2
-#        with:
-#          path: packages
-#      - name: Fixup Package Versions
-#        shell: bash
-#        run: |-
-#          shopt -s globstar
-#          set -e
-#          for package in **/**.deb
-#          do
-#            directory=$(dirname ${package})
-#            filename=$(basename ${package})
-#            pushd ${directory}
-#            echo Fixing up ${package}
-#            fakeroot mkdir -p tmp
-#            fakeroot dpkg-deb -R ${filename} tmp
-#            sed -i '$s:netlify.*:${{ steps.package.outputs.release }}:' tmp/DEBIAN/control
-#            fakeroot dpkg-deb --build tmp temporary.deb
-#            fakeroot dpkg-name temporary.deb
-#            rm ${filename}
-#            rm -r tmp
-#            popd
-#          done
 #      - name: Create Release
 #        uses: actions/create-release@v1
 #        id: create-release
