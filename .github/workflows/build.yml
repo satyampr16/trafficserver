@@ -47,9 +47,6 @@ jobs:
     env:
       DEBFULLNAME: 'github-actions[bot]'
       DEBEMAIL: '41898282+github-actions[bot]@users.noreply.github.com'
-    outputs:
-      version: ${{ steps.info.outputs.version }}
-      release: ${{ steps.info.outputs.release }}
     steps:
       - name: Setup Build Environment
         run: |-
@@ -57,6 +54,8 @@ jobs:
           sudo apt-get install --yes build-essential devscripts ccache git-buildpackage equivs debhelper
         env:
           DEBIAN_FRONTEND: noninteractive
+      - name: Setup Maintenance Script Path
+        run: echo "::add-path::${{github.workspace}}/debian/scripts"
       - name: Setup GitHub Actions Bot
         run: |-
           git config --global user.name "$DEBFULLNAME"
@@ -71,6 +70,8 @@ jobs:
           key: ${{matrix.profile}}-ccache-${{needs.calendar.outputs.timestamp}}
           restore-keys: |
             ${{matrix.profile}}-ccache-
+      # TODO: Put most of this logic into a maintenance script.
+      # GitHub Actions just don't serve our purpose too easily right now.
       # For PRs against our branch
       - name: Checkout Upstream Branch
         uses: actions/checkout@v2
@@ -105,24 +106,12 @@ jobs:
           if_true: ${{ github.base_ref }}
           cond: ${{ github.event_name == 'pull-request' && github.base_ref != 'readme-and-settings' }}
       - name: Update Changelog Snapshot
-        if: github.event_name == 'pull-request' && github.base_ref != 'readme-and-settings'
         run: >-
-          gbp dch
-          --debian-branch=${{github.head_ref}}
-          --distribution=stable
-          --spawn-editor=never
-          --since=${{github.base_ref}}
-      # TODO: Put this into a maintainer script of some kind :P
-      # NOTE: Some of the information here might be wrong for the --since field
-#     - name: Update Changelog
-#       run: >-
-#         gbp dch
-#           --debian-branch=${{ format('{0}{1}', \
-#           '{{ github.base_ref }}', '{{ github.event.inputs.branch }}') }}
-#           --new-version=1:${{steps.info.outputs.extracted-version }}-${{matrix.profile}}+${{needs.calendar.outputs.date}}~${{needs.calendar.outputs.time}}
-#           --spawn-editor=never
-#           --since=${{ github.ref }}
-      # An awful hack for now :(
+          update-debian-changelog 
+          --distribution=pull-request
+          --version=${{needs.calendar.outputs.date}}
+          --revision=${{needs.calendar.outputs.time}}
+          --profile=${{matrix.profile}}
       - name: Build Package
         run: >-
           gbp buildpackage

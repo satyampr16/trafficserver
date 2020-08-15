@@ -30,8 +30,13 @@ test -n "${DEBEMAIL}" || report-error "upddate-debian-changelog requires that \$
 test -n "${distributions[${_arg_distribution}]}" || report-error "'${_arg_distribution}' must be one of ${!distributions[*]}"
 test -n "${profiles[${_arg_profile}]}" || report-error "'${_arg_profile}' must be one of ${!profiles[*]}"
 
+
+upstream=${_arg_upstream:-$(sed -n -e 's/m4_define(\[TS_VERSION_S\],\[\(.*\)\])/\1/p' ${GITHUB_WORKSPACE}/configure.ac)}
+revision=${_arg_revision:-$(date --utc +'%s')}
+version=${_arg_version:-$(date --utc +'%Y.%m.%d')}
+
 debchange \
-  --newversion=1:${_arg_upstream}-${_arg_profile}+${_arg_version}~${_arg_revision} \
+  --newversion=1:${upstream}-${_arg_profile}+${version}~${revision} \
   --distribution=${_arg_distribution} \
   --force-distribution \
   "${_arg_message}"
