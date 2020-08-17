@@ -1,10 +1,7 @@
-name: Pull Request Build
+name: Nightly Build
 on:
-  pull_request:
-    branches:
-      - readme-and-settings
-      - 7.1.x-netlify
-      - 9.0.x-netlify
+  schedule:
+    - cron: '0 0 * * *'
 env:
   DEBFULLNAME: 'github-actions[bot]'
   DEBEMAIL: '41898282+github-actions[bot]@users.noreply.github.com'
@@ -16,19 +13,14 @@ jobs:
     name: Date and Time
     runs-on: ubuntu-20.04
     outputs:
-      timestamp: ${{ steps.datetime.outputs.timestamp }}
       date: ${{ steps.datetime.outputs.date }}
-      time: ${{ steps.datetime.outputs.time }}
     steps:
       - name: Get Current Date
         id: datetime
         run: |-
-          time=$(date --date "1970-01-01 $(date +%T)" +%s)
-          echo "::set-output name=timestamp::$(date --iso-8601=seconds)"
           echo "::set-output name=date::$(date --utc +%Y.%m.%d)"
-          echo "::set-output name=time::${time}"
   build:
-    name: Build Netlify TrafficServer
+    name: Build TrafficServer
     needs: calendar
     runs-on: ubuntu-20.04
     strategy:
@@ -47,60 +39,63 @@ jobs:
           debhelper
           equivs
       - name: Setup Maintenance Script Path
-        run: echo "::add-path::${{github.workspace}}/package/debian/scripts"
+        run: echo "::add-path::${{github.workspace}}/readme-and-settings/debian/scripts"
       - name: Setup GitHub Actions Bot
         run: |-
           git config --global user.name "$DEBFULLNAME"
           git config --global user.email "$DEBEMAIL"
-      - name: Setup Build Artifact Cache
-        uses: actions/cache@v2
-        with:
-          path: ${{env.HOME}}/.ccache
-          key: ${{matrix.profile}}-ccache-${{needs.calendar.outputs.timestamp}}
-          restore-keys: |
-            ${{matrix.profile}}-ccache-
-      - name: Select Upstream Branch
-        uses: haya14busa/action-cond@v1
-        id: upstream
-        with:
-          if_false: 7.1.x-netlify
-          if_true: ${{ github.base_ref }}
-          cond: ${{ github.base_ref == '7.1.x-netlify' || github.base_ref == '9.0.x-netlify' }}
-      - name: Select Debian Branch
-        uses: haya14busa/action-cond@v1
-        id: debian
-        with:
-          if_false: ${{ github.head_ref }}
-          if_true: readme-and-settings
-          cond: ${{ github.base_ref == '7.1.x-netlify' || github.base_ref == '9.0.x-netlify' }}
-      - name: Checkout Upstream Branch
+      - name: Checkout Netlify TrafficServer 9.0.x
         uses: actions/checkout@v2
         with:
-          ref: ${{steps.upstream.outputs.value}}
-          path: upstream
-      - name: Checkout Debian Branch
+          ref: 9.0.x-netlify
+          path: 9.0.x-netlify
+      - name: Checkout Netlify TrafficServer 7.1.x
         uses: actions/checkout@v2
         with:
-          ref: ${{steps.debian.outputs.value}}
-          path: package
+          ref: 7.1.x-netlify
+          path: 7.1.x-netlify
+      - name: Checkout Debian Package Files
+        uses: actions/checkout@v2
+        with:
+          ref: readme-and-settings
+          path: readme-and-settings
       - name: Copy Debian Packaging Files
         run: |-
-          cp -r package/debian upstream/
-      - name: Update Changelog
-        working-directory: upstream
+          cp -r readme-and-settings/debian 9.0.x-netlify/
+          cp -r readme-and-settings/debian 7.1.x-netlify/
+      - name: Update 9.0.x Changelog
+        working-directory: 9.0.x-netlify
         run: >-
-          update-debian-changelog 
-          --distribution=pull-request
+          update-debian-changelog
+          --distribution=nightly
           --version=${{needs.calendar.outputs.date}}
-          --revision=${{needs.calendar.outputs.time}}
+          --revision=0
           --profile=${{matrix.profile}}
-      - name: Build Package
-        working-directory: upstream
+      - name: Update 7.1.x Changelog
+        working-directory: 7.1.x-netlify
+        run: >-
+          update-debian-changelog
+          --distribution=nightly
+          --version=${{needs.calendar.outputs.date}}
+          --revision=0
+          --profile=${{matrix.profile}}
+      - name: Build 9.0.x Packages
+        working-directory: 9.0.x-netlify
         run: >-
           gbp buildpackage
           --git-verbose
-          --git-debian-branch=${{steps.debian.outputs.value}}
-          --git-upstream-tag=${{steps.upstream.outputs.value}}
+          --git-debian-branch=readme-and-settings
+          --git-upstream-tag=9.0.x-netlify
+          --build-profiles=${{matrix.profile}}
+          --buildinfo-option=-u${GITHUB_WORKSPACE}
+          --changes-option=-u${GITHUB_WORKSPACE}
+      - name: Build 7.1.x Packages
+        working-directory: 7.1.x-netlify
+        run: >-
+          gbp buildpackage
+          --git-verbose
+          --git-debian-branch=readme-and-settings
+          --git-upstream-tag=7.1.x-netlify
           --build-profiles=${{matrix.profile}}
           --buildinfo-option=-u${GITHUB_WORKSPACE}
           --changes-option=-u${GITHUB_WORKSPACE}
@@ -112,7 +107,7 @@ jobs:
             ${{github.workspace}}/*.deb
             ${{github.workspace}}/*.ddeb
   upload:
-    name: Create Prerelease
+    name: Create Release
     needs: [build, calendar]
     runs-on: ubuntu-20.04
     steps:
@@ -122,12 +117,11 @@ jobs:
         uses: actions/create-release@v1
         id: release
         env:
-          GITHUB_TOKEN: ${{github.token}}
+          GITHUB_TOKEN: ${{ github.token }}
         with:
-          release_name: ${{ needs.calendar.outputs.date}}.${{needs.calendar.outputs.time}}
-          prerelease: true
-          tag_name: ${{ needs.calendar.outputs.date}}.${{needs.calendar.outputs.time}}
-      - name: Upload Packages
+          release_name: ${{ needs.calendar.outputs.date}}
+          tag_name: ${{ needs.calendar.outputs.date}}
+      - name: Upload Packages (debugging output, doesn't actually upload yet)
         run: >-
           shopt -s globstar;
           for filename in $(ls **/*.deb **/*.ddeb);
@@ -139,4 +133,3 @@ jobs:
           --data-binary @${filename}
           ${{steps.release.outputs.upload_url}}?name=$(basename ${filename});
           done
-
