@@ -1,14 +1,5 @@
-# Improvements to be made still include:
-# Using ccache until we are on CMake
-# Moving to CMake for ATS 9
-# Uploading PR packages directly to an s3 bucket for immediate usage
-name: Build
+name: Pull Request Build
 on:
-  workflow_dispatch:
-    prerelease:
-      description: "Is this a pre-release? (yes/no)"
-      required: true
-      default: "yes"
   pull_request:
     branches:
       - readme-and-settings
@@ -21,7 +12,6 @@ env:
   DPKG_COLORS: always
   TZ: UTC
 jobs:
-  # This is done so that all packages in this build have the EXACT same timestamps + versions
   calendar:
     name: Date and Time
     runs-on: ubuntu-20.04
@@ -38,7 +28,7 @@ jobs:
           echo "::set-output name=date::$(date --utc +%Y.%m.%d)"
           echo "::set-output name=time::${time}"
   build:
-    name: Build TrafficServer
+    name: Build Netlify TrafficServer
     needs: calendar
     runs-on: ubuntu-20.04
     strategy:
@@ -46,19 +36,22 @@ jobs:
       matrix:
         profile: [debug, release, relwithdebinfo]
     steps:
+      - name: Update Apt Package Index
+        run: sudo apt-get update --quiet && sudo apt-get --yes --quiet upgrade
       - name: Setup Build Environment
-        run: |-
-          sudo apt-get update --quiet && sudo apt-get --yes --quiet upgrade
-          sudo apt-get install --yes build-essential devscripts ccache git-buildpackage equivs debhelper
+        run: >-
+          sudo apt-get install --yes
+          git-buildpackage
+          build-essential
+          devscripts
+          debhelper
+          equivs
       - name: Setup Maintenance Script Path
-        run: echo "::add-path::${{github.workspace}}/debian/scripts"
+        run: echo "::add-path::${github.workspace}}/package/debian/scripts"
       - name: Setup GitHub Actions Bot
         run: |-
           git config --global user.name "$DEBFULLNAME"
           git config --global user.email "$DEBEMAIL"
-      # NOTE: This doesn't appear to actually be working. Some investigation is
-      # needed. If it doesn't improve, we'll have to figure something else out.
-      # It doesn't help that the 
       - name: Setup Build Artifact Cache
         uses: actions/cache@v2
         with:
@@ -66,41 +59,35 @@ jobs:
           key: ${{matrix.profile}}-ccache-${{needs.calendar.outputs.timestamp}}
           restore-keys: |
             ${{matrix.profile}}-ccache-
-      # TODO: Put most of this logic into a maintenance script.
-      # GitHub Actions just don't serve our purpose too easily right now.
-      #
-      # For PRs against our branch
-      - name: Checkout Upstream Branch
-        uses: actions/checkout@v2
-        if: github.base_ref == '7.1.x-netlify' || github.base_ref == '9.0.x-netlify'
-        with:
-          fetch-depth: 0
-          clean: false
-      - name: Checkout Debian Branch
-        if: github.base_ref == '7.1.x-netlify' || github.base_ref == '9.0.x-netlify'
-        run: git checkout origin/readme-and-settings -- debian
-      # For manual testing/modifications to readme-and-settings branch
-      - name: Checkout Upstream Branch
-        if: github.base_ref != '7.1.x-netlify' || github.base_ref != '9.0.x-netlify'
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-          ref: 7.1.x-netlify
-          clean: false
-      - name: Checkout Debian Branch
-        if: github.base_ref != '7.1.x-netlify' || github.base_ref != '9.0.x-netlify'
-        run: git checkout origin/${{ github.head_ref }} -- debian
-      - name: Check Staged Index (Debugging)
-        run: git status && ls -la
       - name: Select Upstream Branch
         uses: haya14busa/action-cond@v1
         id: upstream
         with:
           if_false: 7.1.x-netlify
           if_true: ${{ github.base_ref }}
-          cond: ${{ github.event_name == 'pull-request' && github.base_ref != 'readme-and-settings' }}
-
-      - name: Update Changelog Snapshot
+          cond: ${{ github.base_ref == '7.1.x-netlify' || github.base_ref == '9.0.x-netlify' }}
+      - name: Select Debian Branch
+        uses: haya14busa/action-cond@v1
+        id: debian
+        with:
+          if_false: ${{ github.head_ref }}
+          if_true: readme-and-settings
+          cond: ${{ github.base_ref == '7.1.x-netlify' || github.base_ref == '9.0.x-netlify' }}
+      - name: Checkout Upstream Branch
+        uses: actions/checkout@v2
+        with:
+          ref: ${{steps.upstream.outputs.value}}
+          path: upstream
+      - name: Checkout Debian Branch
+        uses: actions/checkout@v2
+        with:
+          ref: ${{steps.debian.outputs.value}}
+          path: package
+      - name: Copy Debian Packaging Files
+        run: |-
+          cp -r package/debian upstream/
+      - name: Update Changelog
+        working-directory: upstream
         run: >-
           update-debian-changelog 
           --distribution=pull-request
@@ -111,7 +98,7 @@ jobs:
         run: >-
           gbp buildpackage
           --git-verbose
-          --git-debian-branch=${{github.head_ref}}
+          --git-debian-branch=${{steps.debian.outputs.value}}
           --git-upstream-tag=${{steps.upstream.outputs.value}}
           --build-profiles=${{matrix.profile}}
           --buildinfo-option=-u${GITHUB_WORKSPACE}

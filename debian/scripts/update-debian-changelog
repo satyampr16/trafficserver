@@ -182,7 +182,7 @@ test -n "${distributions[${_arg_distribution}]}" || report-error "'${_arg_distri
 test -n "${profiles[${_arg_profile}]}" || report-error "'${_arg_profile}' must be one of ${!profiles[*]}"
 
 
-upstream=${_arg_upstream:-$(sed -n -e 's/m4_define(\[TS_VERSION_S\],\[\(.*\)\])/\1/p' ${GITHUB_WORKSPACE}/configure.ac)}
+upstream=${_arg_upstream:-$(sed -n -e 's/m4_define(\[TS_VERSION_S\],\[\(.*\)\])/\1/p' ${PWD}/configure.ac)}
 revision=${_arg_revision:-$(date --utc +'%s')}
 version=${_arg_version:-$(date --utc +'%Y.%m.%d')}
 

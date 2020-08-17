@@ -99,7 +99,10 @@ jobs:
           --build-profiles=${{matrix.profile}}
           --buildinfo-option=-u${GITHUB_WORKSPACE}
           --changes-option=-u${GITHUB_WORKSPACE}
-      - name: List all Packages
-        run: |-
-          find ${{github.workspace}} -name "*.deb"
-          find ${{github.workspace}} -name "*.ddeb"
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{matrix.profile}}
+          path: |-
+            ${{github.workspace}}/*.deb
+            ${{github.workspace}}/*.ddeb
