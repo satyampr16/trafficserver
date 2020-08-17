@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# ARG_OPTIONAL_SINGLE([distribution], [], [One of 'nightly', 'pull-request', or 'stable'])
+# ARG_OPTIONAL_SINGLE([upstream], [], [Override the upstream version extracted from: configure.ac])
+# ARG_OPTIONAL_SINGLE([revision], [], [Override the revision detected via: date --utc +'%s'])
+# ARG_OPTIONAL_SINGLE([version], [], [Override the calendar version detected via: date --utc +'%Y.%m.%d'])
+# ARG_OPTIONAL_SINGLE([profile], [], [One of 'debug', 'release', 'relwithdebinfo'])
+# ARG_POSITIONAL_DOUBLEDASH()
+# ARG_POSITIONAL_SINGLE([message], [Message to add to the changelog], [""])
+# ARG_HELP([update-debian-changelog],[Updates debian changelog using debchange, but is much easier to use and is built for Netlify's packaging needs])
+# ARGBASH_GO
+
+# [ <-- needed because of Argbash
+
+report-error() {
+  if [ -n "${GITHUB_ACTIONS}" ]; then
+    echo "::error ::$1"
+  fi
+  die "$1"
+}
+
+printf 'Value of --%s: %s\n' 'revision' "$_arg_revision"
+
+declare -A distributions=([nightly]=1 [pull-request]=1 [stable]=1)
+declare -A profiles=([relwithdebinfo]=1, [release]=1, [debug]=1)
+
+test -n "${DEBFULLNAME}" || report-error "update-debian-changelog requires that \$DEBFULLNAME be set"
+test -n "${DEBEMAIL}" || report-error "upddate-debian-changelog requires that \$DEBEMAIL be set"
+
+test -n "${distributions[${_arg_distribution}]}" || report-error "'${_arg_distribution}' must be one of ${!distributions[*]}"
+test -n "${profiles[${_arg_profile}]}" || report-error "'${_arg_profile}' must be one of ${!profiles[*]}"
+
+upstream=${_arg_upstream:-$(sed -n -e 's/m4_define(\[TS_VERSION_S\],\[\(.*\)\])/\1/p' ${PWD}/configure.ac)}
+revision=${_arg_revision:-$(date --utc +'%s')}
+version=${_arg_version:-$(date --utc +'%Y.%m.%d')}
+
+debchange \
+  --newversion=1:${upstream}-${_arg_profile}+${version}~${revision} \
+  --distribution=${_arg_distribution} \
+  --force-distribution \
+  "${_arg_message}"
+
+# ] <-- needed because of Argbash
