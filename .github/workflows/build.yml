@@ -47,7 +47,7 @@ jobs:
           debhelper
           equivs
       - name: Setup Maintenance Script Path
-        run: echo "::add-path::${github.workspace}}/package/debian/scripts"
+        run: echo "::add-path::${{github.workspace}}/package/debian/scripts"
       - name: Setup GitHub Actions Bot
         run: |-
           git config --global user.name "$DEBFULLNAME"

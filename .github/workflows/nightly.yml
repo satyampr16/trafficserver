@@ -1,4 +1,4 @@
-name: Nightly Builds
+name: Nightly Build
 on:
   schedule:
     - cron: '0 0,12 * * *'
@@ -39,7 +39,7 @@ jobs:
           debhelper
           equivs
       - name: Setup Maintenance Script Path
-        run: echo "::add-path::${github.workspace}}/readme-and-settings/debian/scripts"
+        run: echo "::add-path::${{github.workspace}}/readme-and-settings/debian/scripts"
       - name: Setup GitHub Actions Bot
         run: |-
           git config --global user.name "$DEBFULLNAME"
