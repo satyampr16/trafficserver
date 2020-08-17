@@ -133,7 +133,7 @@ jobs:
           set -e;
           upload_url=$(echo "${{steps.release.outputs.upload_url}}" | sed -e 's/{.*}//g')?name;
           for filename in $(ls **/*.{deb,ddeb});
-          do echo curl
+          do curl
           -X POST
           -H "Authorization: token ${{github.token}}"
           -H "Accept: application/vnd.github.v3+json"
