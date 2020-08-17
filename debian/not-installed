@@ -1,0 +1,4 @@
+opt/ts/libexec/trafficserver/modules/*.la
+opt/ts/lib/trafficserver/*.la
+opt/ts/share/man
+opt/ts/man/man3
