@@ -19,6 +19,9 @@ on:
       - 7.1.x-netlify
       - 9.0.x-netlify
 env:
+  DEBFULLNAME: 'github-actions[bot]'
+  DEBEMAIL: '41898282+github-actions[bot]@users.noreply.github.com'
+  DEBIAN_FRONTEND: noninteractive
   DPKG_COLORS: always
   TZ: UTC
 jobs:
@@ -27,6 +30,7 @@ jobs:
     name: Date and Time
     runs-on: ubuntu-20.04
     outputs:
+      timestamp: ${{ steps.datetime.outputs.timestamp }}
       date: ${{ steps.datetime.outputs.date }}
       time: ${{ steps.datetime.outputs.time }}
     steps:
@@ -45,16 +49,11 @@ jobs:
       fail-fast: true
       matrix:
         profile: [debug, release, relwithdebinfo]
-    env:
-      DEBFULLNAME: 'github-actions[bot]'
-      DEBEMAIL: '41898282+github-actions[bot]@users.noreply.github.com'
     steps:
       - name: Setup Build Environment
         run: |-
           sudo apt-get update --quiet && sudo apt-get --yes --quiet upgrade
           sudo apt-get install --yes build-essential devscripts ccache git-buildpackage equivs debhelper
-        env:
-          DEBIAN_FRONTEND: noninteractive
       - name: Setup Maintenance Script Path
         run: echo "::add-path::${{github.workspace}}/debian/scripts"
       - name: Setup GitHub Actions Bot
@@ -121,11 +120,38 @@ jobs:
           --build-profiles=${{matrix.profile}}
           --buildinfo-option=-u${GITHUB_WORKSPACE}
           --changes-option=-u${GITHUB_WORKSPACE}
-      - name: Create Release (WIP)
-        uses: actions/github-script@v2
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
         with:
-          script: |-
-            console.log('WIP')
+          name: ${{matrix.profile}}
+          path: |-
+            ${{github.workspace}}/*.deb
+            ${{github.workspace}}/*.ddeb
+#      - name: Create Release (WIP)
+#        uses: actions/github-script@v2
+#        with:
+#          script: |-
+#            const fs = require('fs').promises;
+#            const release = await github.repos.createRelease({
+#
+#            });
+#  upload:
+#    name: Package TrafficServer
+#    needs: [build, calendar]
+#    runs-on: ubuntu-20.04
+#    steps:
+#      - name: Download Artifacts
+#      - name: Create Release
+#        uses: actions/create-release@v1
+#        id: release
+#        env:
+#          GITHUB_TOKEN: ${{ github.token }}
+#        with:
+#          release_name: ${{ needs.calendar.output.date}}.${{needs.calendar.output.time}}
+#          prerelease: ${{ github.event_name == 'pull_request' }}
+#          tag_name: ${{ needs.calendar.output.date}}.${{needs.calendar.output.time}}
+#      - name: Upload Packages
+#        uses: actions/github-script@v2
 #      - name: Display CCache Statistics (Debugging)
 #        run: ccache --show-stats
 #
@@ -141,7 +167,7 @@ jobs:
 #          GITHUB_TOKEN: ${{ github.token }}
 #        with:
 #          release_name: ${{ needs.build.outputs.version }}-${{steps.package.outputs.tag}}
-#          prerelease: ${{ github.event_name == 'pull_request' || github.event.inputs.prerelease == 'yes' }}
+#          prerelease: 
 #          tag_name: ${{needs.build.outputs.version}}-${{ steps.package.outputs.tag }}
 #      - name: Upload Debian Package
 #        uses: actions/github-script@v2
