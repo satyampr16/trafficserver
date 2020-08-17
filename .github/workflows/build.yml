@@ -132,7 +132,8 @@ jobs:
           shopt -s globstar;
           set -e;
           for filename in $(ls **/*.deb **/*.ddeb);
-          do curl
+          do echo curl
+          -X POST
           -H "Authorization: token ${{github.token}}"
           -H "Accept: application/vnd.github.v3+json"
           -H "Content-Length: $(stat --printf='%s' ${filename})"
