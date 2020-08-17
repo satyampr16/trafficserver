@@ -9,10 +9,6 @@ on:
       description: "Is this a pre-release? (yes/no)"
       required: true
       default: "yes"
-  push:
-    branches:
-      - 7.1.x-netlify
-      - 9.0.x-netlify
   pull_request:
     branches:
       - readme-and-settings
