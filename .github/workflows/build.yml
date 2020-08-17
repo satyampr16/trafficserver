@@ -122,12 +122,12 @@ jobs:
         uses: actions/create-release@v1
         id: release
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{github.token}}
         with:
-          release_name: ${{ needs.calendar.output.date}}.${{needs.calendar.output.time}}
+          release_name: ${{ needs.calendar.outputs.date}}.${{needs.calendar.outputs.time}}
           prerelease: true
-          tag_name: ${{ needs.calendar.output.date}}.${{needs.calendar.output.time}}
-      - name: Upload Packages (debugging output, doesn't actually upload yet)
+          tag_name: ${{ needs.calendar.outputs.date}}.${{needs.calendar.outputs.time}}
+      - name: Upload Packages
         run: >-
           shopt -s globstar;
           for filename in $(ls **/*.deb **/*.ddeb);
