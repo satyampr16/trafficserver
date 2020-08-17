@@ -124,6 +124,7 @@ jobs:
       - name: Upload Packages (debugging output, doesn't actually upload yet)
         run: >-
           shopt -s globstar;
+          set -e;
           for filename in $(ls **/*.deb **/*.ddeb);
           do curl
           -H "Authorization: token ${{github.token}}"
