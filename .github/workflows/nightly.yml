@@ -20,7 +20,7 @@ jobs:
         run: |-
           echo "::set-output name=date::$(date --utc +%Y.%m.%d)"
   build:
-    name: Build TrafficServer 7.1.x
+    name: Build TrafficServer
     needs: calendar
     runs-on: ubuntu-20.04
     strategy:

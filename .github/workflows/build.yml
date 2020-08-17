@@ -95,6 +95,7 @@ jobs:
           --revision=${{needs.calendar.outputs.time}}
           --profile=${{matrix.profile}}
       - name: Build Package
+        working-directory: upstream
         run: >-
           gbp buildpackage
           --git-verbose
