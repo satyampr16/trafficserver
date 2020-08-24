@@ -29,8 +29,6 @@ override_dh_auto_configure:
 		--sysconfdir=\$${prefix}/etc/trafficserver \
 		--libdir=\$${prefix}/lib/trafficserver \
 		--libexecdir=\$${prefix}/libexec/trafficserver/modules \
-		--with-user=root \
-		--with-group=root \
 		--enable-layout=Debian \
 		--enable-wccp \
 		$(if $(filter debug,$(DEB_BUILD_PROFILES)),--enable-debug) \
