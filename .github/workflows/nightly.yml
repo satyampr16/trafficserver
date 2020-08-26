@@ -71,6 +71,8 @@ jobs:
           --version=${{needs.calendar.outputs.date}}
           --revision=0
           --profile=${{matrix.profile}}
+          --package=netlify-trafficserver-dev
+          --package=netlify-trafficserver
       - name: Update 7.1.x Changelog
         working-directory: 7.1.x-netlify
         run: >-
@@ -79,6 +81,8 @@ jobs:
           --version=${{needs.calendar.outputs.date}}
           --revision=0
           --profile=${{matrix.profile}}
+          --package=netlify-trafficserver-dev
+          --package=netlify-trafficserver
       - name: Build 9.0.x Packages
         working-directory: 9.0.x-netlify
         run: >-
