@@ -30,8 +30,6 @@ override_dh_auto_configure:
 		--libdir=\$${prefix}/lib/trafficserver \
 		--libexecdir=\$${prefix}/libexec/trafficserver/modules \
 		--enable-layout=Debian \
-		--with-group=nogroup \
-		--with-user=nobody \
 		--enable-wccp \
 		$(if $(filter debug,$(DEB_BUILD_PROFILES)),--enable-debug) \
 		--disable-silent-rules
