@@ -94,6 +94,8 @@ jobs:
           --version=${{needs.calendar.outputs.date}}
           --revision=${{needs.calendar.outputs.time}}
           --profile=${{matrix.profile}}
+          --package=netlify-trafficserver-dev
+          --package=netlify-trafficserver
       - name: Build Package
         working-directory: upstream
         run: >-
