@@ -1,6 +1,6 @@
 opt/ts/bin/traffic*
 opt/ts/bin/tspush
-opt/ts/lib/trafficserver/lib*.so.*
-opt/ts/libexec/trafficserver/modules/*.so
+opt/ts/lib/lib*.so.*
+opt/ts/libexec/trafficserver/*.so
 opt/ts/lib/perl5/*
 opt/ts/etc/trafficserver/*
