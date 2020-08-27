@@ -27,8 +27,8 @@ override_dh_auto_configure:
 		--config-cache \
 		--prefix=${NETLIFY_PREFIX} \
 		--sysconfdir=\$${prefix}/etc/trafficserver \
-		--libdir=\$${prefix}/lib/trafficserver \
-		--libexecdir=\$${prefix}/libexec/trafficserver/modules \
+		--libexecdir=\$${prefix}/libexec/trafficserver \
+		--libdir=\$${prefix}/lib \
 		--enable-layout=Debian \
 		--enable-wccp \
 		$(if $(filter debug,$(DEB_BUILD_PROFILES)),--enable-debug) \
@@ -42,3 +42,6 @@ override_dh_auto_install:
 
 override_dh_builddeb:
 	dh_builddeb --destdir=${GITHUB_WORKSPACE}
+
+# Skip installexamples
+override_dh_installexamples:
