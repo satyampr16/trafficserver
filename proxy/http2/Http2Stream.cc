@@ -722,10 +722,10 @@ Http2Stream::destroy()
     // In many cases, this has been called earlier, so this call is a no-op
     h2_parent->connection_state.delete_stream(this);
 
-    h2_proxy_ssn->connection_state.decrement_stream_count();
+    h2_parent->connection_state.decrement_stream_count();
 
     // Update session's stream counts, so it accurately goes into keep-alive state
-    h2_proxy_ssn->connection_state.release_stream();
+    h2_parent->connection_state.release_stream();
   }
 
   // Clean up the write VIO in case of inactivity timeout
