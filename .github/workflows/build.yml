@@ -64,7 +64,7 @@ jobs:
         id: upstream
         with:
           if_false: 7.1.x-netlify
-          if_true: ${{ github.base_ref }}
+          if_true: ${{ github.head_ref }}
           cond: ${{ github.base_ref == '7.1.x-netlify' || github.base_ref == '9.0.x-netlify' }}
       - name: Select Debian Branch
         uses: haya14busa/action-cond@v1
