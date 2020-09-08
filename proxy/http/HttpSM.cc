@@ -5167,7 +5167,7 @@ HttpSM::do_api_callout_internal()
 {
   if (t_state.backdoor_request) {
     handle_api_return();
-    return;
+    return 0;
   }
 
   switch (t_state.api_next_action) {
