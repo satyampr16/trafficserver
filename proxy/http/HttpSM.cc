@@ -118,7 +118,7 @@ milestone_update_api_time(TransactionMilestones &milestones, ink_hrtime &api_tim
     }
   }
 }
-}
+} // namespace
 
 ClassAllocator<HttpSM> httpSMAllocator("httpSMAllocator");
 
@@ -451,13 +451,14 @@ HttpSM::set_ua_half_close_flag()
   ua_session->set_half_close_flag(true);
 }
 
-inline void
+inline int
 HttpSM::do_api_callout()
 {
   if (hooks_set) {
-    do_api_callout_internal();
+    return do_api_callout_internal();
   } else {
     handle_api_return();
+    return 0;
   }
 }
 
@@ -483,7 +484,16 @@ HttpSM::state_add_to_list(int event, void * /* data ATS_UNUSED */)
   }
 
   t_state.api_next_action = HttpTransact::SM_ACTION_API_SM_START;
-  do_api_callout();
+  if (do_api_callout() < 0) {
+    // Didn't get the hook continuation lock. Clear the read and wait for next event
+    if (ua_entry->read_vio) {
+      // Seems like ua_entry->read_vio->disable(); should work, but that was
+      // not sufficient to stop the state machine from processing IO events until the
+      // TXN_START hooks had completed
+      ua_entry->read_vio = ua_entry->vc->do_io_read(nullptr, 0, nullptr);
+    }
+    return EVENT_CONT;
+  }
   return EVENT_DONE;
 }
 
@@ -613,6 +623,7 @@ HttpSM::attach_client_session(ProxyClientTransaction *client_vc, IOBufferReader 
   ++reentrancy_count;
   // Add our state sm to the sm list
   state_add_to_list(EVENT_NONE, nullptr);
+
   // This is another external entry point and it is possible for the state machine to get terminated
   // while down the call chain from @c state_add_to_list. So we need to use the reentrancy_count to
   // prevent cleanup there and do it here as we return to the external caller.
@@ -894,8 +905,9 @@ HttpSM::state_watch_for_client_abort(int event, void *data)
       //  where the tunnel is not active
       HttpTunnelConsumer *c = tunnel.get_consumer(ua_session);
       if (c && c->alive) {
-        DebugSM("http", "[%" PRId64 "] [watch_for_client_abort] "
-                        "forwarding event %s to tunnel",
+        DebugSM("http",
+                "[%" PRId64 "] [watch_for_client_abort] "
+                "forwarding event %s to tunnel",
                 sm_id, HttpDebugNames::get_event_name(event));
         tunnel.handleEvent(event, c->write_vio);
         return 0;
@@ -1007,7 +1019,7 @@ HttpSM::state_read_push_response_header(int event, void *data)
   switch (event) {
   case VC_EVENT_EOS:
     ua_entry->eos = true;
-  // Fall through
+    // Fall through
 
   case VC_EVENT_READ_READY:
   case VC_EVENT_READ_COMPLETE:
@@ -1035,7 +1047,7 @@ HttpSM::state_read_push_response_header(int event, void *data)
     /////////////////////
     state =
       t_state.hdr_info.server_response.parse_resp(&http_parser, &tmp, tmp + data_size, false // Only call w/ eof when data exhausted
-                                                  );
+      );
 
     bytes_used = tmp - start;
 
@@ -1051,7 +1063,7 @@ HttpSM::state_read_push_response_header(int event, void *data)
   if (ua_entry->eos) {
     const char *end = ua_buffer_reader->start();
     state = t_state.hdr_info.server_response.parse_resp(&http_parser, &end, end, true // We are out of data after server eos
-                                                        );
+    );
     ink_release_assert(state == PARSE_RESULT_DONE || state == PARSE_RESULT_ERROR);
   }
   // Don't allow 0.9 (unparsable headers) since TS doesn't
@@ -1426,11 +1438,7 @@ HttpSM::state_api_callout(int event, void *data)
             HTTP_SM_SET_DEFAULT_HANDLER(&HttpSM::state_api_callout);
             ink_assert(pending_action == nullptr);
             pending_action = mutex->thread_holding->schedule_in(this, HRTIME_MSECONDS(10));
-            // Should @a callout_state be reset back to HTTP_API_NO_CALLOUT here? Because the default
-            // handler has been changed the value isn't important to the rest of the state machine
-            // but not resetting means there is no way to reliably detect re-entrance to this state with an
-            // outstanding callout.
-            return 0;
+            return -1;
           }
         } else {
           plugin_lock = false;
@@ -1935,7 +1943,7 @@ HttpSM::state_read_server_response_header(int event, void *data)
     }
     // FALLTHROUGH (since we are allowing the parse error)
   }
-  // fallthrough
+    // fallthrough
 
   case PARSE_RESULT_DONE:
     DebugSM("http_seq", "Done parsing server response header");
@@ -2053,18 +2061,18 @@ HttpSM::state_send_server_request_header(int event, void *data)
     //
     server_entry->eos = true;
 
-  // I'm not sure about the above comment, but if EOS is received on read and we are
-  // still in this state, we must have not gotten WRITE_COMPLETE.  With epoll we might not receive EOS
-  // from both read and write sides of a connection so it should be handled correctly (close tunnels,
-  // deallocate, etc) here with handle_server_setup_error().  Otherwise we might hang due to not shutting
-  // down and never receiving another event again.
-  /*if (server_buffer_reader->read_avail() > 0 && callout_state == HTTP_API_NO_CALLOUT) {
-     break;
-     } */
+    // I'm not sure about the above comment, but if EOS is received on read and we are
+    // still in this state, we must have not gotten WRITE_COMPLETE.  With epoll we might not receive EOS
+    // from both read and write sides of a connection so it should be handled correctly (close tunnels,
+    // deallocate, etc) here with handle_server_setup_error().  Otherwise we might hang due to not shutting
+    // down and never receiving another event again.
+    /*if (server_buffer_reader->read_avail() > 0 && callout_state == HTTP_API_NO_CALLOUT) {
+       break;
+       } */
 
-  // Nothing in the buffer
-  // proceed to error
-  // fallthrough
+    // Nothing in the buffer
+    // proceed to error
+    // fallthrough
 
   case VC_EVENT_ERROR:
   case VC_EVENT_ACTIVE_TIMEOUT:
@@ -2435,17 +2443,17 @@ HttpSM::state_icp_lookup(int event, void *data)
     t_state.icp_ip_result      = *(struct sockaddr_in *)data;
 
     /*
-    *  Disable ICP loop detection since the Cidera network
-    *    insists on trying to preload the cache from a
-    *    a sibling cache.
-    *
-    *  // inhibit bad ICP looping behavior
-    *  if (t_state.icp_ip_result.sin_addr.s_addr ==
-    *    t_state.client_info.ip) {
-    *      DebugSM("http","Loop in ICP config, bypassing...");
-    *        t_state.icp_lookup_success = false;
-    *  }
-    */
+     *  Disable ICP loop detection since the Cidera network
+     *    insists on trying to preload the cache from a
+     *    a sibling cache.
+     *
+     *  // inhibit bad ICP looping behavior
+     *  if (t_state.icp_ip_result.sin_addr.s_addr ==
+     *    t_state.client_info.ip) {
+     *      DebugSM("http","Loop in ICP config, bypassing...");
+     *        t_state.icp_lookup_success = false;
+     *  }
+     */
     break;
 
   case ICP_LOOKUP_FAILED:
@@ -2879,8 +2887,9 @@ HttpSM::tunnel_handler_100_continue(int event, void *data)
       // if the server closed while sending the
       //    100 continue header, handle it here so we
       //    don't assert later
-      DebugSM("http", "[%" PRId64 "] tunnel_handler_100_continue - server already "
-                      "closed, terminating connection",
+      DebugSM("http",
+              "[%" PRId64 "] tunnel_handler_100_continue - server already "
+              "closed, terminating connection",
               sm_id);
 
       // Since 100 isn't a final (loggable) response header
@@ -3008,7 +3017,7 @@ HttpSM::tunnel_handler_server(int event, HttpTunnelProducer *p)
   case VC_EVENT_ERROR:
     t_state.squid_codes.log_code  = SQUID_LOG_ERR_READ_TIMEOUT;
     t_state.squid_codes.hier_code = SQUID_HIER_TIMEOUT_DIRECT;
-  /* fallthru */
+    /* fallthru */
 
   case VC_EVENT_EOS:
 
@@ -3208,7 +3217,7 @@ HttpSM::is_bg_fill_necessary(HttpTunnelConsumer *c)
       server_entry && server_entry->vc &&              // from an origin server
       server_session && server_session->get_netvc() && // which is still open and valid
       c->producer->num_consumers > 1                   // with someone else reading it
-      ) {
+  ) {
     // If threshold is 0.0 or negative then do background
     //   fill regardless of the content length.  Since this
     //   is floating point just make sure the number is near zero
@@ -3432,7 +3441,7 @@ HttpSM::tunnel_handler_cache_read(int event, HttpTunnelProducer *p)
       // fall through for the case INT64_MAX read with VC_EVENT_EOS
       // callback (read successful)
     }
-  // fallthrough
+    // fallthrough
 
   case VC_EVENT_READ_COMPLETE:
   case HTTP_TUNNEL_EVENT_PRECOMPLETE:
@@ -4915,7 +4924,7 @@ HttpSM::do_http_server_open(bool raw)
                                                        t_state.current.server->name,         // hostname
                                                        ua_session,                           // has ptr to bound ua sessions
                                                        this                                  // sm
-                                                       );
+    );
 
     switch (shared_result) {
     case HSM_DONE:
@@ -5153,12 +5162,12 @@ HttpSM::do_icp_lookup()
   return;
 }
 
-void
+int
 HttpSM::do_api_callout_internal()
 {
   if (t_state.backdoor_request) {
     handle_api_return();
-    return;
+    return 0;
   }
 
   switch (t_state.api_next_action) {
@@ -5196,7 +5205,7 @@ HttpSM::do_api_callout_internal()
   case HttpTransact::SM_ACTION_API_SM_SHUTDOWN:
     if (callout_state == HTTP_API_IN_CALLOUT || callout_state == HTTP_API_DEFERED_SERVER_ERROR) {
       callout_state = HTTP_API_DEFERED_CLOSE;
-      return;
+      return 0;
     } else {
       cur_hook_id = TS_HTTP_TXN_CLOSE_HOOK;
     }
@@ -5208,7 +5217,7 @@ HttpSM::do_api_callout_internal()
 
   cur_hook  = nullptr;
   cur_hooks = 0;
-  state_api_callout(0, nullptr);
+  return state_api_callout(0, nullptr);
 }
 
 VConnection *
@@ -5359,9 +5368,10 @@ HttpSM::release_server_session(bool serve_from_cache)
 
   if (TS_SERVER_SESSION_SHARING_MATCH_NONE != t_state.txn_conf->server_session_sharing_match && t_state.current.server != nullptr &&
       t_state.current.server->keep_alive == HTTP_KEEPALIVE && t_state.hdr_info.server_response.valid() &&
-      t_state.hdr_info.server_request.valid() && (t_state.hdr_info.server_response.status_get() == HTTP_STATUS_NOT_MODIFIED ||
-                                                  (t_state.hdr_info.server_request.method_get_wksidx() == HTTP_WKSIDX_HEAD &&
-                                                   t_state.www_auth_content != HttpTransact::CACHE_AUTH_NONE)) &&
+      t_state.hdr_info.server_request.valid() &&
+      (t_state.hdr_info.server_response.status_get() == HTTP_STATUS_NOT_MODIFIED ||
+       (t_state.hdr_info.server_request.method_get_wksidx() == HTTP_WKSIDX_HEAD &&
+        t_state.www_auth_content != HttpTransact::CACHE_AUTH_NONE)) &&
       plugin_tunnel_type == HTTP_NO_PLUGIN_TUNNEL) {
     HTTP_DECREMENT_DYN_STAT(http_current_server_transactions_stat);
     server_session->server_trans_stat--;
@@ -5517,8 +5527,9 @@ HttpSM::handle_server_setup_error(int event, void *data)
 
   if (tunnel.is_tunnel_active()) {
     ink_assert(server_entry->read_vio == data || server_entry->write_vio == data);
-    DebugSM("http", "[%" PRId64 "] [handle_server_setup_error] "
-                    "forwarding event %s to post tunnel",
+    DebugSM("http",
+            "[%" PRId64 "] [handle_server_setup_error] "
+            "forwarding event %s to post tunnel",
             sm_id, HttpDebugNames::get_event_name(event));
     HttpTunnelConsumer *c = tunnel.get_consumer(server_entry->vc);
     // it is possible only user agent post->post transform is set up
@@ -6923,7 +6934,12 @@ HttpSM::kill_this()
     //  the terminate_flag
     terminate_sm            = false;
     t_state.api_next_action = HttpTransact::SM_ACTION_API_SM_SHUTDOWN;
-    do_api_callout();
+    if (do_api_callout() < 0) { // Failed to get a continuation lock
+      // Need to hang out until we can complete the TXN_CLOSE hook
+      terminate_sm = false;
+      reentrancy_count--;
+      return;
+    }
   }
   // The reentrancy_count is still valid up to this point since
   //   the api shutdown hook is asynchronous and double frees can
