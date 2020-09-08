@@ -7,7 +7,7 @@ MAKE_DIRECTORY := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 include ${MAKE_DIRECTORY}/diagnostics.mk
 include ${MAKE_DIRECTORY}/profiles.mk
 
-export DEB_CXXFLAGS_MAINT_PREPEND = -std=c++17 -Dmy_bool=int
+export DEB_CXXFLAGS_MAINT_PREPEND = -std=c++17 -Dmy_bool=int -mavx2
 export DEB_CXXFLAGS_MAINT_APPEND = $(diagnostics) $(profiles)
 # Currently 7.1.x cannot correctly link without it
 #export DEB_LDFLAGS_MAINT_APPEND = -fuse-ld=lld
