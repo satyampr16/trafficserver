@@ -453,8 +453,8 @@ protected:
   void do_cache_delete_all_alts(Continuation *cont);
   void do_icp_lookup();
   void do_auth_callout();
-  void do_api_callout();
-  void do_api_callout_internal();
+  int do_api_callout();
+  int do_api_callout_internal();
   void do_redirect();
   void redirect_request(const char *redirect_url, const int redirect_len);
   void do_drain_request_body(HTTPHdr &response);
