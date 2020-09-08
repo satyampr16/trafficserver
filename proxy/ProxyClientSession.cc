@@ -160,11 +160,9 @@ ProxyClientSession::state_api_callout(int event, void *data)
     this->handle_api_return(event);
     break;
 
-  // this is a condition that sometimes
-  // happens and causes crashes
+  // coverity[unterminated_default]
   default:
-    TSError("WARN: Invalid event received in ProxyClientSession: %d, hookid: %d", event, this->api_hookid);
-    break;
+    ink_release_assert(false);
   }
 
   return 0;
