@@ -38,6 +38,7 @@ jobs:
           devscripts
           debhelper
           equivs
+          libbrotli-dev
       - name: Setup Maintenance Script Path
         run: echo "::add-path::${{github.workspace}}/readme-and-settings/debian/scripts"
       - name: Setup GitHub Actions Bot
