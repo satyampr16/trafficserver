@@ -30,8 +30,8 @@ jobs:
     steps:
       - name: Update Apt Package Index
         run: |
+          sudo apt-mark hold grub-efi-amd64-signed
           sudo apt-get update --quiet
-          echo "grub-efi-amd64-signed hold" | sudo dpkg --set-selections
           sudo apt-get --yes --quiet upgrade
       - name: Setup Build Environment
         run: >-
