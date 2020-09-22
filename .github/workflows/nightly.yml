@@ -30,8 +30,7 @@ jobs:
     steps:
       - name: Update Apt Package Index
         run: |
-          sudo apt-get install grub-efi
-          sudo update-grub
+          sudo apt-mark hold grub-efi-amd64-signed
           sudo apt-get update --quiet
           sudo apt-get --yes --quiet upgrade
       - name: Setup Build Environment
