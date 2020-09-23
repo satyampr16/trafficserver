@@ -37,7 +37,10 @@ jobs:
         profile: [debug, release, relwithdebinfo]
     steps:
       - name: Update Apt Package Index
-        run: sudo apt-get update --quiet && sudo apt-get --yes --quiet upgrade
+        run: |
+          sudo apt-mark hold grub-efi-amd64-signed
+          sudo apt-get update --quiet
+          sudo apt-get --yes --quiet upgrade
       - name: Setup Build Environment
         run: >-
           sudo apt-get install --yes
