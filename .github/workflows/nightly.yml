@@ -8,7 +8,6 @@ env:
   DEBIAN_FRONTEND: noninteractive
   DPKG_COLORS: always
   TZ: UTC
-  ACCEPT_EULA: Y
 jobs:
   calendar:
     name: Date and Time
@@ -31,6 +30,7 @@ jobs:
     steps:
       - name: Update Apt Package Index
         run: |
+          echo msodbcsql17 msodbcsql/ACCEPT_EULA boolean true | sudo debconf-set-selections
           sudo apt-mark hold grub-efi-amd64-signed
           sudo apt-get update --quiet
           sudo apt-get --yes --quiet upgrade
