@@ -24,7 +24,7 @@ jobs:
         uses: zxaos/patchup@v1
         with:
           local_branch: master
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.PATCHUP_NETLIBOT_TOKEN }}
           upstream_branch: master
           upstream_repo: apache/trafficserver
           target_tag: patchup-master
