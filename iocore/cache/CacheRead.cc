@@ -205,10 +205,13 @@ CacheVC::openReadChooseWriter(int /* event ATS_UNUSED */, Event * /* e ATS_UNUSE
 
   ink_assert(vol->mutex->thread_holding == mutex->thread_holding && write_vc == nullptr);
 
-  if (!od)
+  if (!od) {
+    DebugCacheVC("%s", "CacheVC::openReadChooseWriter, no OpenDirEntry");
     return EVENT_RETURN;
+  }
 
   if (frag_type != CACHE_FRAG_TYPE_HTTP) {
+    DebugCacheVC("%s", "CacheVC::openReadChooseWriter, not an HTTP fragment");
     ink_assert(od->num_writers == 1);
     w = od->writers.head;
     if (w->start_time > start_time || w->closed < 0) {
@@ -221,22 +224,35 @@ CacheVC::openReadChooseWriter(int /* event ATS_UNUSED */, Event * /* e ATS_UNUSE
   }
 #ifdef HTTP_CACHE
   else {
+    DebugCacheVC("%s", "CacheVC::openReadChooseWriter, dealing with an HTTP fragment");
     write_vector      = &od->vector;
     int write_vec_cnt = write_vector->count();
-    for (int c = 0; c < write_vec_cnt; c++)
+    DebugCacheVC("CacheVC::openReadChooseWriter, write_vec_cnt = %d", write_vec_cnt);
+    for (int c = 0; c < write_vec_cnt; c++) {
       vector.insert(write_vector->get(c));
+    }
     // check if all the writers who came before this reader have
     // set the http_info.
     for (w = (CacheVC *)od->writers.head; w; w = (CacheVC *)w->opendir_link.next) {
-      if (w->start_time > start_time || w->closed < 0)
+      DebugCacheVC("%s checking writer.., w->start_time = %d, start_time = %d, w->closed = %d", "CacheVC::openReadChooseWriter",
+                    w->start_time, start_time, w->closed);
+      if (w->start_time > start_time || w->closed < 0) {
         continue;
+      }
+
+      DebugCacheVC("%s checking writer.., cache_config_read_while_writer = %d", "CacheVC::openReadChooseWriter",
+                    cache_config_read_while_writer);
       if (!w->closed && !cache_config_read_while_writer) {
         return -err;
       }
-      if (w->alternate_index != CACHE_ALT_INDEX_DEFAULT)
+
+      if (w->alternate_index != CACHE_ALT_INDEX_DEFAULT) {
+        DebugCacheVC("%s alternate index isn't default", "CacheVC::openReadChooseWriter");
         continue;
+      }
 
       if (!w->closed && !w->alternate.valid()) {
+        DebugCacheVC("%s w isn't closed and w->alternate is not valid??", "CacheVC::openReadChooseWriter");
         od = nullptr;
         ink_assert(!write_vc);
         vector.clear(false);
@@ -245,6 +261,8 @@ CacheVC::openReadChooseWriter(int /* event ATS_UNUSED */, Event * /* e ATS_UNUSE
       // construct the vector from the writers.
       int alt_ndx = CACHE_ALT_INDEX_DEFAULT;
       if (w->f.update) {
+        DebugCacheVC("%s constructing vector from the writers", "CacheVC::openReadChooseWriter");
+
         // all Update cases. Need to get the alternate index.
         alt_ndx = get_alternate_index(&vector, w->update_key);
         // if its an alternate delete
@@ -255,8 +273,11 @@ CacheVC::openReadChooseWriter(int /* event ATS_UNUSED */, Event * /* e ATS_UNUSE
         }
       }
 
-      if (w->alternate.valid())
+      if (w->alternate.valid()) {
+        DebugCacheVC("%s constructing vector from the writers", "CacheVC::openReadChooseWriter");
+
         vector.insert(&w->alternate, alt_ndx);
+      }
     }
 
     if (!vector.count()) {
@@ -264,20 +285,31 @@ CacheVC::openReadChooseWriter(int /* event ATS_UNUSED */, Event * /* e ATS_UNUSE
         // the writer(s) are reading the vector, so there is probably
         // an old vector. Since this reader came before any of the
         // current writers, we should return the old data
+
+        DebugCacheVC("%s writers are reading the vector, return old data", "CacheVC::openReadChooseWriter");
         od = nullptr;
         return EVENT_RETURN;
       }
+
+      DebugCacheVC("%s no doc! (vector count is 0)", "CacheVC::openReadChooseWriter");
       return -ECACHE_NO_DOC;
     }
     if (cache_config_select_alternate) {
+      DebugCacheVC("%s selecting from alternates..", "CacheVC::openReadChooseWriter");
       alternate_index = HttpTransactCache::SelectFromAlternates(&vector, &request, params);
-      if (alternate_index < 0)
+      if (alternate_index < 0) {
+        DebugCacheVC("%s cache miss!", "CacheVC::openReadChooseWriter");
         return -ECACHE_ALT_MISS;
-    } else
+      }
+    } else {
       alternate_index  = 0;
+    }
     CacheHTTPInfo *obj = vector.get(alternate_index);
+    DebugCacheVC("%s got HTTP cache info for alternate index %d", "CacheVC::openReadChooseWriter", alternate_index);
+
     for (w = (CacheVC *)od->writers.head; w; w = (CacheVC *)w->opendir_link.next) {
       if (obj->m_alt == w->alternate.m_alt) {
+        DebugCacheVC("%s found write_vc", "CacheVC::openReadChooseWriter");
         write_vc = w;
         break;
       }
@@ -333,18 +365,27 @@ CacheVC::openReadFromWriter(int event, Event *e)
   if (!write_vc) {
     int ret = openReadChooseWriter(event, e);
     if (ret < 0) {
+      DebugCacheVC("%s got error code, releasing lock", "openReadFromWriter");
       MUTEX_RELEASE(lock);
+      DebugCacheVC("%s setting handler to openReadFromWriterFailure", "openReadFromWriter");
       SET_HANDLER(&CacheVC::openReadFromWriterFailure);
+      DebugCacheVC("%s calling openReadFromWriterFailure with CACHE_EVENT_OPEN_READ_FAILED", "openReadFromWriter");
       return openReadFromWriterFailure(CACHE_EVENT_OPEN_READ_FAILED, reinterpret_cast<Event *>(ret));
     } else if (ret == EVENT_RETURN) {
+      DebugCacheVC("%s got EVENT_RETURN, releasing lock", "openReadFromWriter");
       MUTEX_RELEASE(lock);
+      DebugCacheVC("%s setting handler to openReadStartHead", "openReadFromWriter");
       SET_HANDLER(&CacheVC::openReadStartHead);
       return openReadStartHead(event, e);
     } else if (ret == EVENT_CONT) {
+      DebugCacheVC("%s got EVENT_CONT. writer_lock_retry = %d, max_retries = %d", "openReadFromWriter",
+                    writer_lock_retry, cache_config_read_while_writer_max_retries);
       ink_assert(!write_vc);
       if (writer_lock_retry < cache_config_read_while_writer_max_retries) {
+        DebugCacheVC("%s scheduling retry, current try is %d / %d", "openReadFromWriter", writer_lock_retry, cache_config_read_while_writer_max_retries);
         VC_SCHED_WRITER_RETRY();
       } else {
+        DebugCacheVC("%s returning failure", "openReadFromWriter");
         return openReadFromWriterFailure(CACHE_EVENT_OPEN_READ_FAILED, (Event *)-err);
       }
     } else

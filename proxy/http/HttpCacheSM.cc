@@ -87,10 +87,6 @@ HttpCacheSM::HttpCacheSM()
     lookup_max_recursive(0),
     current_lookup_level(0)
 {
-  if (master_sm) {
-    cont_sm_id = master_sm->cont_sm_id;
-    cont_debug_on = master_sm->cont_debug_on;
-  }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -272,6 +268,7 @@ HttpCacheSM::do_cache_open_read(const HttpCacheKey &key)
   ink_hrtime start_time = ink_get_hrtime_internal();
 
   DebugSM("http_cache", "[%" PRId64 "] [do_cache_open_read] trying openRead, readwhilewrite_inprogress = %d", master_sm->sm_id, this->readwhilewrite_inprogress);
+  DebugSM("http_cache", "[%" PRId64 "] [do_cache_open_read] trying openRead, btw master_sm->cont_sm_id is %d and this->cont_sm_id is %d", master_sm->sm_id, master_sm->cont_sm_id, this->cont_sm_id);
   Action *action_handle           = cacheProcessor.open_read(this, &key, master_sm->t_state.cache_control.cluster_cache_local,
                                                    this->read_request_hdr, this->read_config, this->read_pin_in_cache);
   DebugSM("http_cache", "[%" PRId64 "] [do_cache_open_read] trying openRead... done! took %d milliseconds", master_sm->sm_id,
