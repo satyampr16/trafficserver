@@ -121,6 +121,8 @@ HttpCacheSM::state_cache_open_read(int event, void *data)
 
   switch (event) {
   case CACHE_EVENT_OPEN_READ:
+    Debug("http_cache", "[%" PRId64 "] [state_cache_open_read] it's time for openRead", master_sm->sm_id);
+
     HTTP_INCREMENT_DYN_STAT(http_current_cache_connections_stat);
     ink_assert((cache_read_vc == nullptr) || master_sm->t_state.redirect_info.redirect_in_process);
     if (cache_read_vc) {
@@ -134,6 +136,8 @@ HttpCacheSM::state_cache_open_read(int event, void *data)
 
   case CACHE_EVENT_OPEN_READ_FAILED:
     if ((intptr_t)data == -ECACHE_DOC_BUSY) {
+      Debug("http_cache", "[%" PRId64 "] [state_cache_open_read] openRead failed with ECACHE_DOC_BUSY", master_sm->sm_id);
+
       // Somebody else is writing the object
       if (open_read_tries <= master_sm->t_state.txn_conf->max_cache_open_read_retries) {
         // Retry to read; maybe the update finishes in time
@@ -146,6 +150,9 @@ HttpCacheSM::state_cache_open_read(int event, void *data)
         master_sm->handleEvent(event, data);
       }
     } else {
+      Debug("http_cache", "[%" PRId64 "] [state_cache_open_read] simple miss in the cache",
+        master_sm->sm_id);
+
       // Simple miss in the cache.
       open_read_cb = true;
       master_sm->handleEvent(event, data);
@@ -228,6 +235,9 @@ void
 HttpCacheSM::do_schedule_in()
 {
   ink_assert(pending_action == nullptr);
+
+  Debug("http_cache", "[%" PRId64 "] [state_cache_open_read] scheduling next openRead in " PRId64 " milliseconds",
+    master_sm->sm_id, master_sm->t_state.txn_conf->cache_open_read_retry_time);
   Action *action_handle =
     mutex->thread_holding->schedule_in(this, HRTIME_MSECONDS(master_sm->t_state.txn_conf->cache_open_read_retry_time));
 
@@ -250,6 +260,8 @@ HttpCacheSM::do_cache_open_read(const HttpCacheKey &key)
   }
   // Initialising read-while-write-inprogress flag
   this->readwhilewrite_inprogress = false;
+
+  Debug("http_cache", "[%" PRId64 "] [do_cache_open_read] trying openRead, readwhilewrite_inprogress = %d", master_sm->sm_id, this->readwhilewrite_inprogress);
   Action *action_handle           = cacheProcessor.open_read(this, &key, master_sm->t_state.cache_control.cluster_cache_local,
                                                    this->read_request_hdr, this->read_config, this->read_pin_in_cache);
 

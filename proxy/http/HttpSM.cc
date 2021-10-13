@@ -4602,11 +4602,13 @@ HttpSM::do_cache_lookup_and_read()
     c_url = t_state.cache_info.lookup_url;
   }
 
-  DebugSM("http_seq", "[HttpSM::do_cache_lookup_and_read] [%" PRId64 "] Issuing cache lookup for URL %s", sm_id,
-          c_url->string_get(&t_state.arena));
-
   HttpCacheKey key;
   Cache::generate_key(&key, c_url, t_state.txn_conf->cache_generation_number);
+
+  char keyHex[33];
+
+  DebugSM("http_seq", "[HttpSM::do_cache_lookup_and_read] [%" PRId64 "] Issuing cache lookup for URL %s, hash key %s", sm_id,
+          c_url->string_get(&t_state.arena), key.hash.toHexStr(keyHex));
 
   Action *cache_action_handle =
     cache_sm.open_read(&key, c_url, &t_state.hdr_info.client_request, &(t_state.cache_info.config),
@@ -7567,7 +7569,9 @@ HttpSM::set_next_state()
     ink_assert((cache_sm.cache_write_vc == nullptr) || t_state.redirect_info.redirect_in_process);
     HTTP_SM_SET_DEFAULT_HANDLER(&HttpSM::state_cache_open_write);
 
+    Status("Preparing cache write...");
     do_cache_prepare_write();
+    Status("Preparing cache write... done!");
     break;
   }
 
