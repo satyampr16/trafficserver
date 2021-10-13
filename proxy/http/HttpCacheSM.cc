@@ -87,6 +87,10 @@ HttpCacheSM::HttpCacheSM()
     lookup_max_recursive(0),
     current_lookup_level(0)
 {
+  if (master_sm) {
+    cont_sm_id = master_sm->cont_sm_id;
+    cont_debug_on = master_sm->cont_debug_on;
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////

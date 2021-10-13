@@ -402,6 +402,9 @@ HttpSM::init()
   //  Leaving sm_id as int64_t to minimize code changes.
 
   sm_id                    = (int64_t)ink_atomic_increment((&next_sm_id), 1);
+
+  cont_sm_id = sm_id;
+
   t_state.state_machine_id = sm_id;
   t_state.state_machine    = this;
 
@@ -567,6 +570,8 @@ HttpSM::attach_client_session(ProxyClientTransaction *client_vc, IOBufferReader 
   if (ua_session->debug()) {
     debug_on = true;
   }
+
+  cont_debug_on = debug_on;
 
   start_sub_sm();
 
@@ -7569,9 +7574,7 @@ HttpSM::set_next_state()
     ink_assert((cache_sm.cache_write_vc == nullptr) || t_state.redirect_info.redirect_in_process);
     HTTP_SM_SET_DEFAULT_HANDLER(&HttpSM::state_cache_open_write);
 
-    Status("Preparing cache write...");
     do_cache_prepare_write();
-    Status("Preparing cache write... done!");
     break;
   }
 
