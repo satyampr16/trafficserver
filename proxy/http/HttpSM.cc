@@ -874,11 +874,14 @@ HttpSM::state_watch_for_client_abort(int event, void *data)
     // We got an early EOS.
     NetVConnection *netvc = ua_session->get_netvc();
     if (ua_session->allow_half_open()) {
+      DebugSM("http", "[%" PRId64 "] got early EOS, half-open allowed", sm_id);
       if (netvc) {
+        DebugSM("http", "[%" PRId64 "] got early EOS, half-open allowed, doing IO_SHUTDOWN_READ", sm_id);
         netvc->do_io_shutdown(IO_SHUTDOWN_READ);
       }
       ua_entry->eos = true;
     } else {
+      DebugSM("http", "[%" PRId64 "] got early EOS, half-open NOT allowed", sm_id);
       ua_session->do_io_close();
       ua_buffer_reader = nullptr;
       vc_table.cleanup_entry(ua_entry);
