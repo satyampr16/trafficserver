@@ -12,20 +12,20 @@ This fork is maintained by [@netlify](https://github.com/netlify) to allow us to
 ## Upstream tracking branches
 [view upstream master branch](https://github.com/netlify/trafficserver/tree/master)
 
-[view upstream 7.1.x branch](https://github.com/netlify/trafficserver/tree/7.1.x)
-
 [view upstream 8.1.x branch](https://github.com/netlify/trafficserver/tree/8.1.x)
 
 [view upstream 9.0.x branch](https://github.com/netlify/trafficserver/tree/9.0.x)
 
+[view upstream 9.1.x branch](https://github.com/netlify/trafficserver/tree/9.1.x)
+
 ## Netlify branches
 [view netlify master branch](https://github.com/netlify/trafficserver/tree/master-netlify)
-
-[view netlify 7.1.x branch](https://github.com/netlify/trafficserver/tree/7.1.x-netlify)
 
 [view netlify 8.1.x branch](https://github.com/netlify/trafficserver/tree/8.1.x-netlify)
 
 [view netlify 9.0.x branch](https://github.com/netlify/trafficserver/tree/9.0.x-netlify)
+
+[view netlify 9.1.x branch](https://github.com/netlify/trafficserver/tree/9.1.x-netlify)
 
 # Automation Notes
 This repo is automatically updated by [zxaos/patchup](https://github.com/zxaos/patchup).
@@ -41,14 +41,14 @@ curl -u username:oauth_token
 ## Branches
 Some branches directly track upstream. **if you commit to these branches, your changes will be lost**:
 * master
-* 7.1.x
 * 8.1.x
 * 9.0.x
+* 9.1.x
 
 Instead, commits should be applied to the appropriate `-netlify` branches:
 * master-netlify
-* 7.1.x-netlify
 * 8.1.x-netlify
 * 9.0.x-netlify
+* 9.1.x-netlify
 
 Commits on these branches will attepmt to be merged with upstream when possible.

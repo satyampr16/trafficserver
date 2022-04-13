@@ -56,11 +56,11 @@ jobs:
         with:
           ref: 9.0.x-netlify
           path: 9.0.x-netlify
-      - name: Checkout Netlify TrafficServer 7.1.x
+      - name: Checkout Netlify TrafficServer 9.1.x
         uses: actions/checkout@v2
         with:
-          ref: 7.1.x-netlify
-          path: 7.1.x-netlify
+          ref: 9.1.x-netlify
+          path: 9.1.x-netlify
       - name: Checkout Debian Package Files
         uses: actions/checkout@v2
         with:
@@ -69,7 +69,7 @@ jobs:
       - name: Copy Debian Packaging Files
         run: |-
           cp -r readme-and-settings/debian 9.0.x-netlify/
-          cp -r readme-and-settings/debian 7.1.x-netlify/
+          cp -r readme-and-settings/debian 9.1.x-netlify/
       - name: Update 9.0.x Changelog
         working-directory: 9.0.x-netlify
         run: >-
@@ -80,8 +80,8 @@ jobs:
           --profile=${{matrix.profile}}
           --package=netlify-trafficserver-dev
           --package=netlify-trafficserver
-      - name: Update 7.1.x Changelog
-        working-directory: 7.1.x-netlify
+      - name: Update 9.1.x Changelog
+        working-directory: 9.1.x-netlify
         run: >-
           update-debian-changelog
           --distribution=nightly
@@ -100,13 +100,13 @@ jobs:
           --build-profiles=${{matrix.profile}}
           --buildinfo-option=-u${GITHUB_WORKSPACE}
           --changes-option=-u${GITHUB_WORKSPACE}
-      - name: Build 7.1.x Packages
-        working-directory: 7.1.x-netlify
+      - name: Build 9.1.x Packages
+        working-directory: 9.1.x-netlify
         run: >-
           gbp buildpackage
           --git-verbose
           --git-debian-branch=readme-and-settings
-          --git-upstream-tag=7.1.x-netlify
+          --git-upstream-tag=9.1.x-netlify
           --build-profiles=${{matrix.profile}}
           --buildinfo-option=-u${GITHUB_WORKSPACE}
           --changes-option=-u${GITHUB_WORKSPACE}
