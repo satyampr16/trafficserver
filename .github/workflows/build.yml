@@ -3,8 +3,8 @@ on:
   pull_request:
     branches:
       - readme-and-settings
-      - 7.1.x-netlify
       - 9.0.x-netlify
+      - 9.1.x-netlify
 env:
   DEBFULLNAME: 'github-actions[bot]'
   DEBEMAIL: '41898282+github-actions[bot]@users.noreply.github.com'
@@ -67,16 +67,16 @@ jobs:
         uses: haya14busa/action-cond@v1
         id: upstream
         with:
-          if_false: 7.1.x-netlify
+          if_false: 9.0.x-netlify
           if_true: ${{ github.base_ref }}
-          cond: ${{ github.base_ref == '7.1.x-netlify' || github.base_ref == '9.0.x-netlify' }}
+          cond: ${{ github.base_ref == '9.1.x-netlify' || github.base_ref == '9.0.x-netlify' }}
       - name: Select Debian Branch
         uses: haya14busa/action-cond@v1
         id: debian
         with:
           if_false: ${{ github.head_ref }}
           if_true: readme-and-settings
-          cond: ${{ github.base_ref == '7.1.x-netlify' || github.base_ref == '9.0.x-netlify' }}
+          cond: ${{ github.base_ref == '9.1.x-netlify' || github.base_ref == '9.0.x-netlify' }}
       - name: Checkout Upstream Branch
         uses: actions/checkout@v2
         with:
