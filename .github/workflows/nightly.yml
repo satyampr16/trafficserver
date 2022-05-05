@@ -20,7 +20,7 @@ jobs:
       - name: Get Current Date
         id: datetime
         run: |-
-          echo "::set-output name=date::$(date --utc +%Y.%m.%d)"
+          echo "::set-output name=date::$(date +%s)"
   build:
     name: Build TrafficServer
     needs: calendar
