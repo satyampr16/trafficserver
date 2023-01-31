@@ -4,15 +4,15 @@ name: Rebase onto upstream
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0,12 * * *'
+    - cron: "0 0,12 * * *"
 
   repository_dispatch:
     types:
-      - 'on-demand-check'
+      - "on-demand-check"
 
 jobs:
-  'update_master':
-    name: 'update master from upstream'
+  "update_master":
+    name: "update master from upstream"
     runs-on: ubuntu-latest
     steps:
       - name: clone repo
@@ -30,8 +30,8 @@ jobs:
           target_tag: patchup-master
           conflict_reviewers: "zxaos"
 
-  'update_master-netlify':
-    name: 'update master-netlify from upstream'
+  "update_master-netlify":
+    name: "update master-netlify from upstream"
     runs-on: ubuntu-latest
     steps:
       - name: clone repo
@@ -49,8 +49,8 @@ jobs:
           target_tag: patchup-master-netlify
           conflict_reviewers: "zxaos"
 
-  'update_9-1-x':
-    name: 'update 9.1.x from upstream'
+  "update_9-1-x":
+    name: "update 9.1.x from upstream"
     runs-on: ubuntu-latest
     steps:
       - name: clone repo
@@ -68,8 +68,8 @@ jobs:
           target_tag: patchup-9.1.x
           conflict_reviewers: "zxaos"
 
-  'update_9-1-x-netlify':
-    name: 'update 9.1.x-netlify from upstream'
+  "update_9-1-x-netlify":
+    name: "update 9.1.x-netlify from upstream"
     runs-on: ubuntu-latest
     steps:
       - name: clone repo
@@ -87,8 +87,8 @@ jobs:
           target_tag: patchup-9.1.x-netlify
           conflict_reviewers: "zxaos"
 
-  'update_8-1-x':
-    name: 'update 8.1.x from upstream'
+  "update_9-2-x":
+    name: "update 9.2.x from upstream"
     runs-on: ubuntu-latest
     steps:
       - name: clone repo
@@ -99,15 +99,15 @@ jobs:
       - name: rebase upstream
         uses: zxaos/patchup@v1
         with:
-          local_branch: 8.1.x
+          local_branch: 9.2.x
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          upstream_branch: 8.1.x
+          upstream_branch: 9.2.x
           upstream_repo: apache/trafficserver
-          target_tag: patchup-8.1.x
+          target_tag: patchup-9.2.x
           conflict_reviewers: "zxaos"
 
-  'update_8-1-x-netlify':
-    name: 'update 8.1.x-netlify from upstream'
+  "update_9-2-x-netlify":
+    name: "update 9.2.x-netlify from upstream"
     runs-on: ubuntu-latest
     steps:
       - name: clone repo
@@ -118,47 +118,9 @@ jobs:
       - name: rebase upstream
         uses: zxaos/patchup@v1
         with:
-          local_branch: 8.1.x-netlify
+          local_branch: 9.2.x-netlify
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          upstream_branch: 8.1.x
+          upstream_branch: 9.2.x
           upstream_repo: apache/trafficserver
-          target_tag: patchup-8.1.x-netlify
-          conflict_reviewers: "zxaos"
-
-  'update_9-0-x':
-    name: 'update 9.0.x from upstream'
-    runs-on: ubuntu-latest
-    steps:
-      - name: clone repo
-        uses: actions/checkout@v2
-        with:
-          persist-credentials: true
-          fetch-depth: 0
-      - name: rebase upstream
-        uses: zxaos/patchup@v1
-        with:
-          local_branch: 9.0.x
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          upstream_branch: 9.0.x
-          upstream_repo: apache/trafficserver
-          target_tag: patchup-9.0.x
-          conflict_reviewers: "zxaos"
-
-  'update_9-0-x-netlify':
-    name: 'update 9.0.x-netlify from upstream'
-    runs-on: ubuntu-latest
-    steps:
-      - name: clone repo
-        uses: actions/checkout@v2
-        with:
-          persist-credentials: true
-          fetch-depth: 0
-      - name: rebase upstream
-        uses: zxaos/patchup@v1
-        with:
-          local_branch: 9.0.x-netlify
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          upstream_branch: 9.0.x
-          upstream_repo: apache/trafficserver
-          target_tag: patchup-9.0.x-netlify
+          target_tag: patchup-9.2.x-netlify
           conflict_reviewers: "zxaos"
