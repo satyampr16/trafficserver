@@ -1,12 +1,12 @@
 ---
 name: Nightly Build
-on:  # yamllint disable-line rule:truthy
+on: # yamllint disable-line rule:truthy
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
 env:
-  DEBFULLNAME: 'github-actions[bot]'
-  DEBEMAIL: '41898282+github-actions[bot]@users.noreply.github.com'
+  DEBFULLNAME: "github-actions[bot]"
+  DEBEMAIL: "41898282+github-actions[bot]@users.noreply.github.com"
   DEBIAN_FRONTEND: noninteractive
   DPKG_COLORS: always
   TZ: UTC
@@ -51,16 +51,16 @@ jobs:
         run: |-
           git config --global user.name "$DEBFULLNAME"
           git config --global user.email "$DEBEMAIL"
-      - name: Checkout Netlify TrafficServer 9.0.x
-        uses: actions/checkout@v2
-        with:
-          ref: 9.0.x-netlify
-          path: 9.0.x-netlify
       - name: Checkout Netlify TrafficServer 9.1.x
         uses: actions/checkout@v2
         with:
           ref: 9.1.x-netlify
           path: 9.1.x-netlify
+      - name: Checkout Netlify TrafficServer 9.2.x
+        uses: actions/checkout@v2
+        with:
+          ref: 9.2.x-netlify
+          path: 9.2.x-netlify
       - name: Checkout Debian Package Files
         uses: actions/checkout@v2
         with:
@@ -68,18 +68,8 @@ jobs:
           path: readme-and-settings
       - name: Copy Debian Packaging Files
         run: |-
-          cp -r readme-and-settings/debian 9.0.x-netlify/
           cp -r readme-and-settings/debian 9.1.x-netlify/
-      - name: Update 9.0.x Changelog
-        working-directory: 9.0.x-netlify
-        run: >-
-          update-debian-changelog
-          --distribution=nightly
-          --version=${{needs.calendar.outputs.date}}
-          --revision=0
-          --profile=${{matrix.profile}}
-          --package=netlify-trafficserver-dev
-          --package=netlify-trafficserver
+          cp -r readme-and-settings/debian 9.2.x-netlify/
       - name: Update 9.1.x Changelog
         working-directory: 9.1.x-netlify
         run: >-
@@ -90,16 +80,16 @@ jobs:
           --profile=${{matrix.profile}}
           --package=netlify-trafficserver-dev
           --package=netlify-trafficserver
-      - name: Build 9.0.x Packages
-        working-directory: 9.0.x-netlify
+      - name: Update 9.2.x Changelog
+        working-directory: 9.2.x-netlify
         run: >-
-          gbp buildpackage
-          --git-verbose
-          --git-debian-branch=readme-and-settings
-          --git-upstream-tag=9.0.x-netlify
-          --build-profiles=${{matrix.profile}}
-          --buildinfo-option=-u${GITHUB_WORKSPACE}
-          --changes-option=-u${GITHUB_WORKSPACE}
+          update-debian-changelog
+          --distribution=nightly
+          --version=${{needs.calendar.outputs.date}}
+          --revision=0
+          --profile=${{matrix.profile}}
+          --package=netlify-trafficserver-dev
+          --package=netlify-trafficserver
       - name: Build 9.1.x Packages
         working-directory: 9.1.x-netlify
         run: >-
@@ -107,6 +97,16 @@ jobs:
           --git-verbose
           --git-debian-branch=readme-and-settings
           --git-upstream-tag=9.1.x-netlify
+          --build-profiles=${{matrix.profile}}
+          --buildinfo-option=-u${GITHUB_WORKSPACE}
+          --changes-option=-u${GITHUB_WORKSPACE}
+      - name: Build 9.2.x Packages
+        working-directory: 9.2.x-netlify
+        run: >-
+          gbp buildpackage
+          --git-verbose
+          --git-debian-branch=readme-and-settings
+          --git-upstream-tag=9.2.x-netlify
           --build-profiles=${{matrix.profile}}
           --buildinfo-option=-u${GITHUB_WORKSPACE}
           --changes-option=-u${GITHUB_WORKSPACE}
