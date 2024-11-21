@@ -1,0 +1,1291 @@
+<link rel="icon" href=
+"EpicNow.in1.png"
+          type="image/x-icon">
+          <!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1505559861131933"
+    crossorigin="anonymous"></script>
+
+    <div class="text-right">
+
+   
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+    <title>SaiMobiles.in</title>
+  
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  *{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    font-family: 'Poppins', sans-serif;
+  }
+  .wrapper{
+    background: #292c41;
+    position: fixed;
+    width: 100%;
+  }
+  .wrapper nav{
+    position: relative;
+    display: flex;
+    max-width: calc(100% - 200px);
+    margin: 0 auto;
+    height: 70px;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.5em;
+
+  }
+  nav .content{
+    display: flex;
+    align-items: center;
+  }
+  nav .content .links{
+    margin-left: 80px;
+    display: flex;
+    text-decoration: none;
+  }
+
+
+  .content .logo a{
+    color: #fff;
+    font-size: 25px;
+    font-weight: 600;
+    text-decoration: none;
+ 
+  }
+
+
+  .content .logo img {
+    border-radius: 6px;
+    cursor: default;
+    width: 50px;
+    height: 50px;
+
+
+    
+  }
+
+
+  .content .links li{
+    list-style: none;
+    line-height: 70px;
+    text-decoration: none;
+    margin-top: 8px;
+  }
+  .content .links li a,
+  .content .links li label{
+    color: #fff;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 9px 17px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+  }
+  .content .links li label{
+    display: none;
+  }
+  .content .links li a:hover,
+  .content .links li label:hover{
+    background: #323c4e;
+  }
+  .wrapper .search-icon,
+  .wrapper .menu-icon{
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    line-height: 70px;
+    width: 70px;
+    text-align: center;
+  }
+  .wrapper .menu-icon{
+    display: none;
+  }
+  .wrapper #show-search:checked ~ .search-icon i::before{
+    content: "\f00d";
+  }
+  
+  .wrapper .search-box{
+    position: absolute;
+    height: 100%;
+    max-width: calc(100% - 50px);
+    width: 100%;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+  }
+  .wrapper #show-search:checked ~ .search-box{
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .search-box input{
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    font-size: 17px;
+    color: #fff;
+    background: #292c41;
+    padding: 0 100px 0 15px;
+  }
+  .search-box input::placeholder{
+    color: #f2f2f2;
+  }
+  .search-box .go-icon{
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    line-height: 60px;
+    width: 70px;
+    background: #171c24;
+    border: none;
+    outline: none;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  .wrapper input[type="checkbox"]{
+    display: none;
+  }
+  
+  /* Dropdown Menu code start */
+  .content .links ul{
+    position: absolute;
+    background: #171c24;
+    top: 80px;
+    z-index: -1;
+    opacity: 0;
+    visibility: hidden;
+  }
+  .content .links li:hover > ul{
+    top: 70px;
+    opacity: 1;
+    visibility: visible;
+    transition: all 0.3s ease;
+  }
+  .content .links ul li a{
+    display: block;
+    width: 100%;
+    line-height: 30px;
+    border-radius: 0px!important;
+  }
+  .content .links ul ul{
+    position: absolute;
+    top: 0;
+    right: calc(-100% + 8px);
+  }
+  .content .links ul li{
+    position: relative;
+  }
+  .content .links ul li:hover ul{
+    top: 0;
+  }
+  
+  /* Responsive code start */
+  @media screen and (max-width: 1250px){
+    .wrapper nav{
+      max-width: 100%;
+      padding: 0 20px;
+    }
+    nav .content .links{
+      margin-left: 30px;
+    }
+    .content .links li a{
+      padding: 8px 13px;
+    }
+    .wrapper .search-box{
+      max-width: calc(100% - 100px);
+    }
+    .wrapper .search-box input{
+      padding: 0 100px 0 15px;
+    }
+  }
+  
+  @media screen and (max-width: 900px){
+    .wrapper .menu-icon{
+      display: block;
+    }
+    .wrapper #show-menu:checked ~ .menu-icon i::before{
+      content: "\f00d";
+    }
+    nav .content .links{
+      display: block;
+      position: fixed;
+      background: #14181f;
+      height: 100%;
+      width: 100%;
+      top: 100px;
+      left: -100%;
+      margin-left: 0;
+      max-width: 350px;
+      overflow-y: auto;
+      padding-bottom: 100px;
+      transition: all 0.3s ease;
+     
+    }
+    nav #show-menu:checked ~ .content .links{
+      left: 0%;
+    }
+    .content .links li{
+      margin: 15px 20px;
+    }
+    .content .links li a,
+    .content .links li label{
+      line-height: 40px;
+      font-size: 20px;
+      display: block;
+      padding: 8px 18px;
+      cursor: pointer;
+    }
+    .content .links li a.desktop-link{
+      display: none;
+    }
+  
+    /* dropdown responsive code start */
+    .content .links ul,
+    .content .links ul ul{
+      position: static;
+      opacity: 1;
+      visibility: visible;
+      background: none;
+      max-height: 0px;
+      overflow: hidden;
+    }
+    .content .links #show-features:checked ~ ul,
+    .content .links #show-services:checked ~ ul,
+    .content .links #show-items:checked ~ ul{
+      max-height: 100vh;
+    }
+    .content .links ul li{
+      margin: 7px 20px;
+    }
+    .content .links ul li a{
+      font-size: 18px;
+      line-height: 30px;
+      border-radius: 5px!important;
+    }
+  }
+  
+  @media screen and (max-width: 400px){
+    .wrapper nav{
+      padding: 0 10px;
+    }
+    .content .logo a{
+      font-size: 24px;
+      display: flex;
+      
+    }
+
+    .content .logo img {
+       width: 40px;
+       height: 40px;
+       border-radius: 6px;
+       margin-right: 6px;
+    }
+    .wrapper .search-box{
+      max-width: calc(100% - 70px);
+    }
+    .wrapper .search-box .go-icon{
+      width: 30px;
+      right: 0;
+    }
+    .wrapper .search-box input{
+      padding-right: 30px;
+    }
+  }
+
+  .faq1 {
+    text-align: center;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-bottom: 10px;
+    font-size: 18px;
+  }
+
+
+/* Main content styles */
+
+#games {
+    text-align: left;
+  margin-left: 2em;
+  margin-bottom: 4px;
+  font-weight: 400;
+  font-size: 18px;
+}
+
+    
+.container {
+            display: flex;
+            overflow: hidden; /* Remove the horizontal scroll bar */
+            font-size: 18px;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: none;
+            margin-bottom: 2em;
+            touch-action: pan-x; /* Enable horizontal touch scrolling */
+            width: 100%;
+            cursor: grab;
+        }
+
+        .item {
+            flex: 0 0 auto;
+            width: 196px;
+            height: 340px;
+            background-color: none;
+            margin-right: 15px;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: grab;
+            transition: background-color 0.3s;
+            font-family: 'poppins',sans-serif;
+            text-decoration: none;
+        }
+
+       
+
+        .item-content {
+            padding: 15px;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        h3 {
+            margin: 0;
+            font-size: 20px;
+            color: #333;
+        }
+
+        p {
+            margin: 8px 0 0;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .item-content img {
+            width: 150px;
+            height: 150px;
+            align-items: center;
+            border-radius: 8px;
+        }
+   
+
+   
+
+/* footer design */
+  
+.footer-content {
+  text-align: center;
+  background-color: #0a091c;
+  padding: 2em;
+  overflow-x: hidden;
+  
+}
+
+
+#slogan {
+  text-align: center;
+  background-color: #070707;
+  padding: 0.5em;
+  border-radius: 8px;
+  color: #ffffff80;
+}
+
+
+.h51 {
+  color: #fff;
+  padding: 2px;
+}
+
+.h52 {
+  color: #fff;
+  padding-bottom: 8px;
+}
+
+#ma1 {
+    text-align: center;
+  margin-bottom: 12px;
+  font-weight: 600;
+  font-size: 20px;
+  color: #303030;
+  margin-left: 2em;
+  margin-right: 2em;
+
+}
+
+#popupButton {
+        padding: 12px 26px;
+        font-size: 14px;
+        font-weight: bold;
+        text-transform: uppercase;
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+     
+      }
+
+
+      #popupButton:hover {
+        background: linear-gradient(135deg, #2575fc 0%, #6a11cb 100%);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        transform: translateY(-3px);
+      }
+
+      #popupButton:active {
+        transform: translateY(1px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Pop-Up styling */
+      .popup-overlay {
+        display: none; /* Hidden by default */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+        justify-content: center;
+       
+      }
+
+      .popup-content {
+        background-color: white;
+        padding: 25px;
+        border-radius: 10px;
+        width: 500px;
+        height: 500px;
+        text-align: center;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        align-content: center;
+        margin-top: 4em;
+      }
+
+      .popup-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 28px;
+        cursor: pointer;
+        color: #555;
+        transition: color 0.3s ease;
+      }
+
+      .popup-close:hover {
+        color: red;
+      }
+
+      h2 {
+        font-size: 24px;
+        color: #333;
+      }
+
+      p {
+        color: #555;
+        font-size: 16px;
+      }
+
+      .buttoncen {
+
+        text-align: center;
+        margin-bottom: 2em;
+      }
+
+
+      #scrollContainer1 {
+    width: 100%;   /* Set to any fixed width or 100% for full container width */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    white-space: nowrap; /* Ensure the children are laid out in a single line if needed */
+}
+
+
+
+
+
+
+#popupButton1 {
+  padding: 12px 26px;
+        font-size: 14px;
+        font-weight: bold;
+        text-transform: uppercase;
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+      }
+
+      /* Hover Effect */
+      #popupButton1:hover {
+        background: linear-gradient(135deg, #2575fc 0%, #6a11cb 100%);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        transform: translateY(-3px);
+      }
+
+      /* Active (pressed) state */
+      #popupButton1:active {
+        transform: translateY(1px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Pulse Animation to make button more interactive */
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      /* Adding the pulse effect */
+     
+
+      /* Modal Style */
+      .modal {
+        display: none; /* Hidden by default */
+        position: fixed;
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+        animation: fadeIn 0.3s ease;
+      }
+
+      /* Modal Content */
+      .modal-content {
+        background-color: white;
+        margin: 10% auto;
+        padding: 30px;
+        border-radius: 10px;
+        width: 80%;
+        max-width: 500px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        animation: slideUp 0.3s ease;
+      }
+
+      /* Header inside the Modal */
+      .modal-content h2 {
+        margin-bottom: 20px;
+        color: #333;
+      }
+
+      /* Close Button */
+      .close {
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        cursor: pointer;
+      }
+
+      .close:hover,
+      .close:focus {
+        color: #000;
+      }
+
+
+.button5 {
+
+text-align: center;
+margin-bottom: 2em;
+
+}
+
+      /* Smooth Fade-In and Slide-Up Animations */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideUp {
+        from {
+          transform: translateY(20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      /* Responsive Modal for smaller screens */
+      @media (max-width: 600px) {
+        .modal-content {
+          width: 90%;
+          padding: 20px;
+        }
+
+        #popupButton1 {
+          padding: 12px 20px;
+          font-size: 14px;
+        }
+      }
+      
+
+@media screen and (max-width: 250px){
+.social-icons {
+  color: #000000;
+  font-size: 24px;
+  align-items: center;
+  display: flex;
+  justify-content: space-around;
+  margin-inline: 300px;
+
+
+  
+}
+}
+
+
+
+
+    </style>
+</head>
+<body>
+
+    <header>
+        
+       
+        <div class="wrapper">
+            <nav>
+              <input type="checkbox" id="show-search">
+              <input type="checkbox" id="show-menu">
+              <label for="show-menu" class="menu-icon"><i class="fas fa-bars"></i></label>
+              <div class="content">
+              <div class="logo"><a href="#"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKnqBAmX5h4QG_QiY7fUMLOxm9pt78hxld3g&s" id="sml"> SaiMobiles.in</a></div>
+                <ul class="links">
+                  <li id="home"><a href="#home">Home</a></li>
+                  <li><a href="#">About</a></li>
+                  <li>
+                    <a href="#" class="desktop-link">Service</a>
+                    <input type="checkbox" id="show-features">
+                    <label for="show-features">Service</label>
+                    
+                  </li>
+                  <li>
+                    <a href="#" class="desktop-link">Reviews</a>
+                    <input type="checkbox" id="show-services">
+                    <label for="show-services">Reviews</label>
+                    <ul>
+                      
+  
+                    </ul>
+                  </li>
+                  <li><a href="#">Help and Support </a></li>
+                </ul>
+              </div>
+              <label for="show-search" class="search-icon"><i class="fas fa-search"></i></label>
+              <form action="#" class="search-box">
+                <input type="text" placeholder="Type Something to Search..." required>
+                <button type="submit" class="go-icon"><i class="fas fa-long-arrow-alt-right"></i></button>
+              </form>
+            </nav>
+          </div>
+
+
+        
+    </header>
+
+<br>
+<br>
+<br>
+<br>
+   
+
+    <p id="games"><i class="fa-solid fa-gears"></i>   DEVICE ACCESSORIES</p>
+
+    <hr>
+
+    <p id="ma1">Mobiles accessories starting at just ₹ 99</p>
+
+    <hr>
+    
+    <!--
+      <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i>
+    -->
+  
+
+    <div class="container" id="scrollContainer1"> <!-- Add an ID to the container for JavaScript -->
+      <!-- Your content goes here -->
+
+      
+
+
+     
+
+      <div class="item">
+        <div class="item-content">
+            <p><img src="https://www.gogripp.com/cdn/shop/files/4_8606b008-a3ed-431b-a2bf-745269e9d269.png?v=1696838700" ></p>
+            <p id="namespace">Tempered Glass</p>
+            <b>₹ 99</b>
+            <hr>
+           
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i> 5.0
+        
+            <hr>
+           
+        </div>
+        
+    </div>
+
+    <div class="item">
+      <div class="item-content">
+          <p><img src="https://images.samsung.com/is/image/samsung/p6pim/in/feature/164163067/in-feature-15w-fast-charging-to-stay-ready-533255481?$FB_TYPE_A_MO_JPG$" ></p> 
+          <p id="namespace">Phone Charger 15W</p>
+          <b>₹ 199</b>
+          <hr>
+         
+          <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i> 4.6
+      
+          <hr>
+         
+      </div>
+      
+  </div>
+
+  <div class="item">
+    <div class="item-content">
+        <p><img src="https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRdra1yIeY4-MNA-mxNN2KBRxEGokPfkJC0EwYvTKeF5smG1mvUthB9ahxy_o0RT4JDwBzKtYpjwLC9EZDyqRlER53RjbBht9LWg0acKw8dxX96K5P-2TTDoGU&usqp=CAE" ></p>
+        <p id="namespace">Phone Charger 25W</p>
+        <b>₹ 299</b>
+        <hr>
+       
+        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i> 4.8
+    
+        <hr>
+       
+    </div>
+    
+</div>    
+           
+<div class="item">
+  <div class="item-content">
+      <p><img src="https://m.media-amazon.com/images/I/310WV2g02fL._SX300_SY300_QL70_FMwebp_.jpg" ></p>
+      <p id="namespace">Phone Charger 65W</p>
+      <b>₹ 359</b>
+      <hr>
+     
+      <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i> 4.5
+  
+      <hr>
+     
+  </div>
+  
+</div>  
+
+<div class="item">
+  <div class="item-content">
+      <p><img src="https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTtSsfPUvrSYlZ7sfxzLCOCxtLg4X1SDuurzJbQ3q86_dLdtMCUrjkR9Ud00V026dNdeEf2UmYe1IneiaG-Kzxc6op68eXCttUUHAjgV_7SL8PR_ypU9f_U" ></p>
+      <p id="namespace">Phone Cases</p>
+      <b>₹ 149</b>
+      <hr>
+     
+      <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i> 5.0
+  
+      <hr>
+     
+  </div>
+  
+</div>
+          
+<div class="item">
+  <div class="item-content">
+      <p><img src="https://www.jiomart.com/images/product/original/rvbevvavpp/enter-typist-mini-usb-wired-slim-mini-laptop-keyboard-black-product-images-orvbevvavpp-p602243603-0-202306082033.jpg?im=Resize=(420,420)" ></p>
+      <p id="namespace">Keyboard</p>
+      <b>₹ 299</b>
+      <hr>
+     
+      <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i> 4.0
+  
+      <hr>
+     
+  </div>
+  
+</div>      
+
+<div class="item">
+  <div class="item-content">
+      <p><img src="https://www.thevaluestore.in/image/cache/catalog/2021/Logitech/Mouse/m90-1-1000x1000.jpg" ></p>
+      <p id="namespace">Mouse</p>
+      <b>₹ 199</b>
+      <hr>
+     
+      <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i>4.2
+  
+      <hr>
+     
+  </div>
+  
+</div>
+      
+
+<div class="item">
+  <div class="item-content">
+      <p><img src="https://www.simplyshopping.in/cdn/shop/products/1_437655be-aa16-4381-b42d-9d3ad273d826_2048x.webp?v=1660823411" ></p>
+      <p id="namespace">Speakers </p>
+      <b>₹ 699</b>
+      <hr>
+     
+      <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i> 4.3
+  
+      <hr>
+     
+  </div>
+  
+</div>
+
+
+
+
+
+        </div>
+
+      <!-- Add more items as needed -->
+  </div>
+
+<div class="buttoncen">
+ 
+  <button id="popupButton">BUY NOW!</button>
+
+  <!-- The Pop-Up -->
+  <div id="popup" class="popup-overlay">
+    <div class="popup-content">
+      <span class="popup-close" id="popupClose">&times;</span>
+      <h6>ShriSaiMobile.Service@gmail.com</h6>
+      <p>To Buy Contact us on above gmail</p>
+      <hr />
+      <h3>How to write ?</h3>
+      <br />
+      <p>Mobile model name :</p>
+      <P>Product Name :</P>
+      <P>Address :</P>
+      <p>Write description :</p>
+    </div>
+  </div>
+
+</div>
+
+<br>
+
+<p id="games"><i class="fa-sharp fa-solid fa-screwdriver-wrench"></i> REPAIRS AND SERVICES</p>
+
+<hr>
+
+<p id="ma1">Repairs and Services starting at just ₹ 359</p>
+
+<hr>
+
+<div class="container" id="scrollContainer2"> <!-- Add an ID to the container for JavaScript -->
+  <!-- Your content goes here -->
+
+  
+
+
+ 
+
+  <div class="item">
+    <div class="item-content">
+        <p><img src="https://s3no.cashify.in/cashify/productLinePartVariation/img/xhdpi/5d2440e1d4b31.jpg?p=default&s=lg" ></p>
+        <p id="namespace">Front camera is not working</p>
+        <b>₹ 599</b>
+        <hr>
+       
+        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i> 5.0
+    
+        <hr>
+       
+    </div>
+    
+</div>
+
+<div class="item">
+  <div class="item-content">
+      <p><img src="https://s3no.cashify.in/cashify/productLinePartVariation/img/xhdpi/5d2441a16cca9.jpg?p=default&s=lg" ></p> 
+      <p id="namespace">Back camera is not working</p>
+      <b>₹ 699</b>
+      <hr>
+     
+      <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i> 4.5
+  
+      <hr>
+     
+  </div>
+  
+</div>
+
+<div class="item">
+<div class="item-content">
+    <p><img src="https://s3no.cashify.in/cashify/productLinePartVariation/img/xhdpi/5d2443731c3db.jpg?p=default&s=lg" ></p>
+    <p id="namespace">Volume button not working</p>
+    <b>₹ 399</b>
+    <hr>
+   
+    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i> 4.7
+
+    <hr>
+   
+</div>
+
+</div>    
+       
+<div class="item">
+<div class="item-content">
+  <p><img src="https://s3no.cashify.in/cashify/productLinePartVariation/img/xhdpi/5d2444092bce8.jpg?p=default&s=lg" ></p>
+  <p id="namespace">Finger Touch not working</p>
+  <b>₹ 659</b>
+  <hr>
+ 
+  <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i> 4.9
+
+  <hr>
+ 
+</div>
+
+</div>  
+
+<div class="item">
+<div class="item-content">
+  <p><img src="https://s3no.cashify.in/cashify/productLinePartVariation/img/xhdpi/5d244674ced62.jpg?p=default&s=lg" ></p>
+  <p id="namespace">Speaker is not working properly</p>
+  <b>₹ 359</b>
+  <hr>
+ 
+  <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i> 5.0
+
+  <hr>
+ 
+</div>
+
+</div>
+      
+<div class="item">
+<div class="item-content">
+  <p><img src="https://s3no.cashify.in/cashify/productLinePartVariation/img/xhdpi/5d24486306b57.jpg?p=default&s=lg" ></p>
+  <p id="namespace">Charging Port is not working</p>
+  <b>₹ 399</b>
+  <hr>
+ 
+  <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i> 4.3
+
+  <hr>
+ 
+</div>
+
+</div>      
+
+<div class="item">
+<div class="item-content">
+  <p><img src="https://s3no.cashify.in/cashify/productLinePartVariation/img/xhdpi/5d244762197f4.jpg?p=default&s=lg" ></p>
+  <p id="namespace">Power button is not working </p>
+  <b>₹ 399</b>
+  <hr>
+ 
+  <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i>4.1
+
+  <hr>
+ 
+</div>
+
+</div>
+  
+
+<div class="item">
+<div class="item-content">
+  <p><img src="https://s3no.cashify.in/cashify/productLinePartVariation/img/xhdpi/5d2448e9ec9d0.jpg?p=default&s=lg" ></p>
+  <p id="namespace">Face sensor is not working </p>
+  <b>₹ 499</b>
+  <hr>
+ 
+  <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i> 4.2
+
+  <hr>
+ 
+</div>
+
+</div>
+
+
+
+
+
+    </div>
+</div>
+
+
+<div class="button5">
+
+<button id="popupButton1">REPAIR NOW!</button>
+
+    <!-- The Modal (Hidden by default) -->
+    <div id="popupModal" class="modal">
+      <!-- Modal content -->
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h6>ShriSaiMobile.Service@gmail.com</h6>
+        <p> To Repair Contact us on above gmail</p>
+        <hr>
+        <h6>How to write ?</h6>
+        <p>Mobile Model :
+        </p>
+        <p>Address :</p>
+        <p>Repair name :</p>
+        <p>Description :</p>
+      </div>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  <script>
+      // JavaScript to enable horizontal scrolling with both mouse and touch events
+  
+
+
+
+      var container = document.getElementById('scrollContainer1');
+var isPointerDown = false;
+var startPointerX;
+var startScrollLeft;
+
+// Unified pointer event handling (works for mouse and touch)
+container.addEventListener('pointerdown', function (e) {
+    e.preventDefault(); // Prevent default behavior (e.g., text selection)
+    isPointerDown = true;
+    startPointerX = e.pageX; // Store the initial position of the pointer
+    startScrollLeft = container.scrollLeft;
+    container.setPointerCapture(e.pointerId); // Ensure we capture the pointer
+});
+
+container.addEventListener('pointerup', function () {
+    isPointerDown = false;
+});
+
+container.addEventListener('pointermove', function (e) {
+    if (!isPointerDown) return; // Only scroll if the pointer is down
+    e.preventDefault(); // Prevent default scrolling behavior
+    var x = e.pageX; // Get the horizontal position of the pointer (mouse or touch)
+    var walk = (x - startPointerX) * 2; // Adjust the scroll speed as needed
+    container.scrollLeft = startScrollLeft - walk;
+});
+
+container.addEventListener('pointercancel', function () {
+    isPointerDown = false; // Reset when pointer capture is lost
+});
+
+
+
+
+
+
+
+
+      var container = document.getElementById('scrollContainer2');
+      var isPointerDown = false;
+      var startPointerX;
+      var startScrollLeft;
+      var isTouchDown = false;
+      var startTouchX;
+
+      container.addEventListener('mousedown', function (e) {
+          isPointerDown = true;
+          startPointerX = e.pageX;
+          startScrollLeft = container.scrollLeft;
+      });
+
+      container.addEventListener('mouseup', function () {
+          isPointerDown = false;
+      });
+
+      container.addEventListener('mousemove', function (e) {
+          if (!isPointerDown) return;
+          e.preventDefault();
+          var x = e.pageX;
+          var walk = (x - startPointerX) * 2; // Adjust the scrolling speed as needed
+          container.scrollLeft = startScrollLeft - walk;
+      });
+
+      container.addEventListener('touchstart', function (e) {
+          isTouchDown = true;
+          startTouchX = e.touches[0].pageX;
+          startScrollLeft = container.scrollLeft;
+      });
+
+      container.addEventListener('touchend', function () {
+          isTouchDown = false;
+      });
+
+      container.addEventListener('touchmove', function (e) {
+          if (!isTouchDown) return;
+          e.preventDefault();
+          var x = e.touches[0].pageX;
+          var walk = (x - startTouchX) * 2; // Adjust the scrolling speed as needed
+          container.scrollLeft = startScrollLeft - walk;
+      });
+
+
+
+
+
+ // Get elements
+ const popupButton = document.getElementById("popupButton");
+      const popup = document.getElementById("popup");
+      const popupClose = document.getElementById("popupClose");
+
+      // Show pop-up when the button is clicked
+      popupButton.addEventListener("click", function () {
+        popup.style.display = "flex";
+      });
+
+      // Close the pop-up when the close button is clicked
+      popupClose.addEventListener("click", function () {
+        popup.style.display = "none";
+      });
+
+      // Optionally, close pop-up when clicking outside the content
+      window.addEventListener("click", function (event) {
+        if (event.target === popup) {
+          popup.style.display = "none";
+        }
+      });
+
+
+
+      const popupButton2 = document.getElementById("popupButton2");
+      const popup2 = document.getElementById("popup2");
+      const popupClose2 = document.getElementById("popupClose2");
+
+      // Show pop-up when the button is clicked
+      popupButton.addEventListener("click", function () {
+        popup.style.display = "flex";
+      });
+
+      // Close the pop-up when the close button is clicked
+      popupClose.addEventListener("click", function () {
+        popup.style.display = "none";
+      });
+
+      // Optionally, close pop-up when clicking outside the content
+      window.addEventListener("click", function (event) {
+        if (event.target === popup) {
+          popup.style.display = "none";
+        }
+      });
+
+
+
+
+       // Get the modal
+       var modal = document.getElementById("popupModal");
+
+// Get the button that opens the modal
+var btn = document.getElementById("popupButton1");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks the button, open the modal
+btn.onclick = function () {
+  modal.style.display = "block";
+};
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function () {
+  modal.style.display = "none";
+};
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function (event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+};
+      
+
+  </script>
+
+
+
+    </div>
+  
+
+
+
+  
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                
+                
+            </div>
+
+            <div class="footer-contact">
+              
+                <h5 class="h51">Contact Us</h5>              
+
+                <p><i class="fa-solid fa-envelope"></i>  Email: shrisaimobile.service@gmail.com</p>
+                <p><i class="fa-solid fa-phone"></i>  Phone: +1 (123) 456-7890</p>
+          <br>
+                <h5 class="h52">Follow Us</h5>
+                
+
+                <div class="social-icons">
+                  <a href="#"><i class="fa-brands fa-facebook" id="ice"></i></a> <a href="#"><i class="fa-brands fa-twitter"></i></a> <a href="#"><i class="fa-brands fa-github"></i></a> <a href="#"><i class="fa-brands fa-youtube"></i></i></a> 
+               
+                </div>
+            </div>
+            <br>
+            <p id="slogan">&copy; Since 2024 SaiMobiles.in By satyam prajapati. All rights reserved.</p>
+        </div>
+        
+
+    </footer>
+    
+
+    <!-- Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
